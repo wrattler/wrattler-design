@@ -227,28 +227,3 @@ open [the respository via this link](https://github.com/wrattler/wrattler/tree/a
    and also the overall user interface that puts everything together and calls
    the individual language plugins to create editors for each blocks (there is also
    `debug.fs` which draws dependency graphs).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-a
