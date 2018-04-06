@@ -58,7 +58,7 @@ The current state of the prototype is that it "works on my machine". That is:
    
 ## Communication protocol
 
-#### Data store
+### Data store
 
 The data store is extremely simple and handles only two types of requests - to store data
 frame and to load data frame. Assuming http://localhost:7102 is the URL where the data store
@@ -98,7 +98,7 @@ Wrattler does not understand R code blocks on the browser side, so it creates ju
 hash for the block. The code block can generate multiple variables and those will be
 stored under the same hash.
 
-#### Language kernels
+### Language kernels
 
 The client-side browser component of Wrattler has a simple plug-in model that lets 
 people add support for new programming languages. The interface is mostly 
