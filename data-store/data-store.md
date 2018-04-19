@@ -7,14 +7,14 @@ bibliography: data-store.bib
 
 
 The following constitute very drafty thoughts on the design of a “data store”
-for Wrattler. Comments, suggestions, and criticism are welcome.
+for Wrattler. Comments, suggestions, and criticism are welcome. 
 
 
 # Background
 
 ## Motivation
 
-A major reason for the creation of Wrattler is to provide a common framework
+A major motivation for the creation of Wrattler is to provide a common framework
 into which our various to-be-developed AI assistants can fit. We anticipate that
 these asistants will generate “suggested analyses” whose intent -- roughly
 roughly -- is to add “additional information” to the data. We don't know the
@@ -26,7 +26,7 @@ such a language the development of a new assistant will require only a single
 translation (to and from the common language) rather than between every possible
 pair of agents.
 
-A typical exisiting notebook, such as one created by Jupyter, comprises a series
+A typical existing notebook, such as one created by Jupyter, comprises a series
 of “executable cells” of code, interspersed with formatted text and output such
 as charts. These cells are not independent but are typically steps in a larger
 piece of analysis; there is therefore the question of how state is maintained
