@@ -26,11 +26,11 @@ such a language the development of a new assistant will require only a single
 translation (to and from the common language) rather than between every possible
 pair of agents.
 
-A typical exisiting notebook, such as one created by Jupyter, comprises a series
-of “executable cells” of code, interspersed with formatted text and output such
-as charts. These cells are not independent but are typically steps in a larger
-piece of analysis; there is therefore the question of how state is maintained
-between the execution of one cell and the next.
+A typical notebook in contemporary practice, such as one created by Jupyter,
+comprises a series of “executable cells” of code interspersed with formatted
+text and output such as charts. These cells are not independent but are
+typically steps in a larger piece of analysis; there is therefore the question
+of how state is maintained between the execution of one cell and the next.
 
 The current answer is that the cells are executed in a single runtime process --
 the “kernel” -- so that the execution of each cell takes place in the
@@ -63,50 +63,74 @@ ideas out there but frankly none of them seem to work well in practice (at least
 none of them grab me as a data scientist). So that's a worry.
 
 
-## Comparisons
+## Existing examples of a "common data language"
 
 - The relational model 
 
-  Good theory; implementations tend not to be faithful to the theory. (For
+  Well-defined theory; implementations tend not to be faithful to the theory. (For
   example, there are two relations with no columns but these are usually not
-  supported);
+  supported by RDMSs);
 
 - Types, in the PL sense
 
-  Good theory; not implemented widely outside certain programming
-  languages. However, *type providers*, which expose data as F# types, might be
-  an interesting model.
+  Well-define theory; not implemented widely outside certain programming
+  languages. However, *type providers*, which expose data as F# types, are one
+  example of where types are used to describe data. 
   
 - Ontologies
 
-  The theory here appears to be logic. That seems sensible, but they are not
-  widely used by data scientists, perhaps because it's hard to bring together
-  different domains?
+  The theory here appears to be logic, and particularly "description logics",
+  which have an expressive power greater than propositional logic but less than
+  first-order logic. For whatever reason, such ontologies are not widely used by
+  data scientists, and tend to be used in practice in particular domains, such
+  as healthcare or certain industries, whose practitioners acknowledge great
+  difficulties in knowledge management.
 
 - “Provenance Graphs”
 
   I don't know enough about
   these. https://www.usenix.org/legacy/event/tapp10/tech/full_papers/buneman.pdf
   
-
 - "NoSQL" models
 
   As far as I can tell, these are predominantly key-value stores; there is no
-  metadata to speak of.
+  metadata to speak of, and very little theory of knowledge *per se*.
   
 - JSON
 
-  Sometimes called “self-documenting,” which I think refers to the fact that
-  certain hierarchical structures are encoded directly in the data. Possibly
-  better thought of as “ad hoc.”
-
+  Sometimes called “self-documenting data,” which I think refers to the fact
+  that certain hierarchical structures are encoded directly in the
+  data. Perhaps better thought of as “ad hoc data”.
+  
 
 # Desiderata
 
-The following are the things that I, as a data scientist, would like.
+The following are the things that I, as a data scientist, would like to see.
+
+## Tabular data
+
+In our existing prototype we manage “tabular” data only, which data that
+consists of a set of rows, each of which “has the same set of fields.” A more
+formal definition is given [below](Overview of the Relational Model). 
+
+Tabular data covers a lot of use cases and forms the basis of a relational
+database. All practical systems (eg, R or Pandas in Python) support some form of
+tables (which R calls "data frames" and I think Pandas has followed suit.) 
+
+[^vectors]: That's “vector” in the data science sense of “sequence indexed by
+that naturals up to some $N$” rather than in the mathematical sense of “things
+for which one has the concepts of addition and multiplication by reals.“
+
+## Differentiation of data from representation
+
+Most systems provide an abstraction that appears to support, for example, “real
+numbers”. Usually, what is stored is an IEEE 754 floating point numbers but the size of the
+floating point number is not necessarily the same between different systems. 
 
 
 
+
+# Overview of the Relational Model
 
 
 
@@ -124,3 +148,6 @@ The following are the things that I, as a data scientist, would like.
     * A multi-language computing environment for literate programming and
       reproducible research (2012) Eric Schulte, Dan Davison, Thomas Dye,
       Carsten Dominik
+
+- Edgar F Codd. “A relational model of data for large shared data
+  banks”. Communications of the ACM 13.6 (1970), pp. 377–387.
