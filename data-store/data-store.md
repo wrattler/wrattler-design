@@ -111,7 +111,7 @@ Tomas' design notes.)
 
 ## Tabular data
 
-In our existing prototype we manage “tabular” data only, which are data that
+In our existing prototype we store “tabular” data only, which are data that
 consist of a set of rows, each of which “has the same set of fields.” A more
 formal definition is given [below](Overview of the Relational Model).
 
@@ -128,26 +128,20 @@ for which one has the concepts of addition and multiplication by reals.“
 ## Semantic annotations
 
 The semantics of data frames as understood by R and Python is rather
-impoverished. What is known in these systems is that each column has a
+impoverished. What is known in these systems is roughly that each column has a
 particular primitive “type” or “class” -- for example, string, float, integer,
-possibly Boolean.[^standard-unions] 
-
-[^standard-unions]: Some systems do provide a basic catch-all facility for “out of
-type” value, such as R's “`NA`” value, or SQL's “`NULL`”. The semantics of these
-are often poorly-understood. In addition, floating point numbers, although
-intended as a represention of the real numbers, contain additional, non-real,
-values, such as “`NaN`” and “`+Inf`”. 
+possibly Boolean.
 
 Real-world data contain a greater richness of meaning than these simple
 representations allow.
 
 ### The meaning of primitive types
 
-At present, many things are left unsaid or implicit which should be made
-explicit in order to communicate between different languages or assistants. One
-example is the size and format of the representation of real numbers (16 bits,
-32 bits, arbitrary precision, arbitrary size, fixed precision decimal, and so
-on), or whether non-numeric values such as “`NaN`” and “`+Inf`” are included.
+At present, many things are left unsaid which should be made explicit in order
+to communicate between different languages or assistants. One example is the
+size and format of the representation of real numbers (16 bits, 32 bits,
+arbitrary precision, arbitrary size, fixed precision decimal, and so on), or
+whether non-numeric values such as “`NaN`” and “`+Inf`” are included.
 
 Since we intend to allow communications between different systems, we had be
 able to communicate the representations available (and possibly translate
@@ -155,37 +149,50 @@ between them).
 
 ### Interpretations of data represented as primitive types
 
-Real-world data has an *interpretation*. A particular float might be a
+Real-world data has an interpretation. A particular float might be a
 representation of a *real number*, specifically a *physical measurement*,
-specifically a *temperature*, specifically *in Celsius*. 
+specifically a *temperature*, specifically a temperature *in Celsius*.
 
 In R, at least, it is also possible for the class of a column to be a “derived”
-type, that is one which is internally held as a primitive but which is
+type; that is, one which is internally held as a primitive but which is
 interpreted as something else. An example is a “Date”, which may internally be
 held as a (floating point) number, interpreted as the number of days since some
-reference date. However, as far as I know, one can't have structured data types
-(*e.g.*, pairs) in columns.
+reference date. 
+
+The data store should be aware of these interpretations -- and possibly provide
+a standard set of common interpretations -- but need not understand the detailed
+operations available.
+
+### Complex types
 
 Real-world data often contains values of different types in the same column. For
 example, survey responses often include special values for the various reasons
 for a non-response; these are often coded as negative integers in order to
-distinguish them from the categorical answer scale, coded as positive
-integers.
+distinguish them from the categorical answer scale, coded as positive integers.
 
-### Complex types
+Raw data frequently contains values that can be thought of as different types,
+arising by inconsistencies or errors in data collection, such as measurements
+record in different units. 
+
+However, most systems (especially databases!) insist that every column is a
+single type, apart possibly from a distinguished, catch-all, “out of type”
+value, such as R's “`NA`” value, or SQL's “`NULL`”, the semantics of which is
+poorly-understood. 
+
+The other kind of complex data occurs when a single “value” is composed of more
+than one primitive value, typically from multiple columns. An example is
+geographical coordinates, with longitude in one column and latitude in another.
+
+### “User-defined“ annotations
+
+A new system may fail to be used because it is too inflexible and cannot be
+extended in ways that the user requires for her particular purpose. On the other
+hand, it can also fail because the extension mechanism is *too* open, providing
+no semantic guarantees or constraints. Navigating this strait is not trivial.
 
 
+## Distinction between data and representation.
 
-
-
-
-
-## Differentiation of data from representation
-
-Most systems provide an abstraction that appears to support, for example, “real
-numbers”. Usually, what is stored is an IEEE 754 floating point numbers but the
-size of the floating point number is not necessarily the same between different
-systems.
 
 
 
