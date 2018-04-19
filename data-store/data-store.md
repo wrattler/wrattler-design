@@ -26,11 +26,11 @@ such a language the development of a new assistant will require only a single
 translation (to and from the common language) rather than between every possible
 pair of agents.
 
-A typical existing notebook, such as one created by Jupyter, comprises a series
-of “executable cells” of code, interspersed with formatted text and output such
-as charts. These cells are not independent but are typically steps in a larger
-piece of analysis; there is therefore the question of how state is maintained
-between the execution of one cell and the next.
+A typical notebook in contemporary practice, such as one created by Jupyter,
+comprises a series of “executable cells” of code interspersed with formatted
+text and output such as charts. These cells are not independent but are
+typically steps in a larger piece of analysis; there is therefore the question
+of how state is maintained between the execution of one cell and the next.
 
 The current answer is that the cells are executed in a single runtime process --
 the “kernel” -- so that the execution of each cell takes place in the
@@ -63,50 +63,134 @@ ideas out there but frankly none of them seem to work well in practice (at least
 none of them grab me as a data scientist). So that's a worry.
 
 
-## Comparisons
+## Existing examples of a "common data language"
 
 - The relational model 
 
-  Good theory; implementations tend not to be faithful to the theory. (For
+  Well-defined theory; implementations tend not to be faithful to the theory. (For
   example, there are two relations with no columns but these are usually not
-  supported);
+  supported by RDMSs);
 
 - Types, in the PL sense
 
-  Good theory; not implemented widely outside certain programming
-  languages. However, *type providers*, which expose data as F# types, might be
-  an interesting model.
+  Well-define theory; not implemented widely outside certain programming
+  languages. However, *type providers*, which expose data as F# types, are one
+  example of where types are used to describe data. 
   
 - Ontologies
 
-  The theory here appears to be logic. That seems sensible, but they are not
-  widely used by data scientists, perhaps because it's hard to bring together
-  different domains?
+  The theory here appears to be logic, and particularly "description logics",
+  which have an expressive power greater than propositional logic but less than
+  first-order logic. For whatever reason, such ontologies are not widely used by
+  data scientists, and tend to be used in practice in particular domains, such
+  as healthcare or certain industries, whose practitioners acknowledge great
+  difficulties in knowledge management.
 
 - “Provenance Graphs”
 
   I don't know enough about
   these. https://www.usenix.org/legacy/event/tapp10/tech/full_papers/buneman.pdf
   
-
 - "NoSQL" models
 
   As far as I can tell, these are predominantly key-value stores; there is no
-  metadata to speak of.
+  metadata to speak of, and very little theory of knowledge *per se*.
   
 - JSON
 
-  Sometimes called “self-documenting,” which I think refers to the fact that
-  certain hierarchical structures are encoded directly in the data. Possibly
-  better thought of as “ad hoc.”
-
+  Sometimes called “self-documenting data,” which I think refers to the fact
+  that certain hierarchical structures are encoded directly in the
+  data. Perhaps better thought of as “*ad hoc* data”.
+  
 
 # Desiderata
 
-The following are the things that I, as a data scientist, would like.
+The following are things that I, as a data scientist, would like to see
+supported by the system I use every day. (Much of the following was described in
+Tomas' design notes.)
+
+## Tabular data
+
+In our existing prototype we manage “tabular” data only, which are data that
+consist of a set of rows, each of which “has the same set of fields.” A more
+formal definition is given [below](Overview of the Relational Model).
+
+Tabular data covers many use cases and forms the basis of relational
+databases. All practical systems, *e.g.*, R or Python Pandas) support some form
+of tables (which R calls "data frames" and I think Pandas has copied that
+nomenclature) so they are a pre-existing *lingua franca* of data. We should
+probably start by building on these, with an eye to where we want to go.
+
+[^vectors]: That's “vector” in the data science sense of “sequence indexed by
+that naturals up to some $N$” rather than in the mathematical sense of “things
+for which one has the concepts of addition and multiplication by reals.“
+
+## Semantic annotations
+
+The semantics of data frames as understood by R and Python is rather
+impoverished. What is known in these systems is that each column has a
+particular primitive “type” or “class” -- for example, string, float, integer,
+possibly Boolean.[^standard-unions] 
+
+[^standard-unions]: Some systems do provide a basic catch-all facility for “out of
+type” value, such as R's “`NA`” value, or SQL's “`NULL`”. The semantics of these
+are often poorly-understood. In addition, floating point numbers, although
+intended as a represention of the real numbers, contain additional, non-real,
+values, such as “`NaN`” and “`+Inf`”. 
+
+Real-world data contain a greater richness of meaning than these simple
+representations allow.
+
+### The meaning of primitive types
+
+At present, many things are left unsaid or implicit which should be made
+explicit in order to communicate between different languages or assistants. One
+example is the size and format of the representation of real numbers (16 bits,
+32 bits, arbitrary precision, arbitrary size, fixed precision decimal, and so
+on), or whether non-numeric values such as “`NaN`” and “`+Inf`” are included.
+
+Since we intend to allow communications between different systems, we had be
+able to communicate the representations available (and possibly translate
+between them).
+
+### Interpretations of data represented as primitive types
+
+Real-world data has an *interpretation*. A particular float might be a
+representation of a *real number*, specifically a *physical measurement*,
+specifically a *temperature*, specifically *in Celsius*. 
+
+In R, at least, it is also possible for the class of a column to be a “derived”
+type, that is one which is internally held as a primitive but which is
+interpreted as something else. An example is a “Date”, which may internally be
+held as a (floating point) number, interpreted as the number of days since some
+reference date. However, as far as I know, one can't have structured data types
+(*e.g.*, pairs) in columns.
+
+Real-world data often contains values of different types in the same column. For
+example, survey responses often include special values for the various reasons
+for a non-response; these are often coded as negative integers in order to
+distinguish them from the categorical answer scale, coded as positive
+integers.
+
+### Complex types
 
 
 
+
+
+
+
+## Differentiation of data from representation
+
+Most systems provide an abstraction that appears to support, for example, “real
+numbers”. Usually, what is stored is an IEEE 754 floating point numbers but the
+size of the floating point number is not necessarily the same between different
+systems.
+
+
+
+
+# Overview of the Relational Model
 
 
 
@@ -124,3 +208,6 @@ The following are the things that I, as a data scientist, would like.
     * A multi-language computing environment for literate programming and
       reproducible research (2012) Eric Schulte, Dan Davison, Thomas Dye,
       Carsten Dominik
+
+- Edgar F Codd. “A relational model of data for large shared data
+  banks”. Communications of the ACM 13.6 (1970), pp. 377–387.
