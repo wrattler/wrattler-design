@@ -64,7 +64,16 @@ ideas out there but frankly none of them seem to work well in practice (at least
 none of them grab me as a data scientist). So that's a worry.
 
 
-## Existing examples of a "common data language"
+## Existing examples of a “common data language”
+
+In the following examples, there is perhaps a distinction to be made between
+*theories of data* and *ways of representing data*. So, for example, the
+relational model is mostly concerned with a certain way of thinking about data;
+whereas JSON, say, is mostly concerned with representing data. It is true that
+JSON represents certain kinds of data (roughly, those which can be thought of as
+a *dictionary* of key-value pairs, where the values may be one of a set of
+primitive types or another dictionary) but one usually discusses the
+serialisation more than the nature of the data.
 
   - The relational model 
 
@@ -110,11 +119,14 @@ none of them grab me as a data scientist). So that's a worry.
     As far as I can tell, these are predominantly key-value stores; there is no
     metadata to speak of, and very little theory of knowledge *per se*.
   
-  - JSON
+  - JSON, XML, RDF, YAML, and other structured formats
 
     Sometimes called “self-documenting data,” which I think refers to the fact
     that certain hierarchical structures are encoded directly in the
     data. Perhaps better thought of as “*ad hoc* data”.
+ 
+    I think of these more as a seralisation mechanism for particular kinds of
+    underlying structure, rather as csv is a seralisation of tabular data.
 
 [^provenance]: See, eg, https://www.usenix.org/legacy/event/tapp10/tech/full_papers/buneman.pdf
   
@@ -135,8 +147,10 @@ Tabular data covers many use cases and forms the basis of relational
 databases. Existing language-based systems, *e.g.*, R or Python Pandas,
 typically support some form of tables (which R calls "data frames" and I think
 Pandas has copied that nomenclature) so tables are a pre-existing *lingua
-franca* of data. We should probably start by building on these, with an eye to
-where we want to go.
+franca* of data. Even vectors might be thought of as a single-column table.[^vectors]
+
+We should probably start by building on tables, with an eye to where we want to
+go.
 
 [^vectors]: That's “vector” in the data science sense of “sequence indexed by
 that naturals up to some $N$” rather than in the mathematical sense of “things
@@ -258,3 +272,5 @@ about:
 
 - Edgar F Codd. “A relational model of data for large shared data
   banks”. Communications of the ACM 13.6 (1970), pp. 377–387.
+
+https://en.wikipedia.org/wiki/IEEE_754
