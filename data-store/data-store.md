@@ -80,9 +80,10 @@ serialisation more than the nature of the data.
     Well-defined theory, in which the notion of “tabular data” corresponds
     reasonably well with that of “relation.” Essentially all modern databases
     (up until the recent interest in so-called “NoSQL” models) are based around
-    the relational model. Implementations tend not to be completely faithful to
-    the theorym however. (For example, there are two relations having no columns
-    but these are usually not supported by RDMSs);
+    the relational model. In practice, implementations (Relational Database
+    Management Systems, or RDMSs) tend not to be completely faithful to the
+    theory. For example, there are two relations having no columns but these are
+    usually not supported.
 
     Many concepts in “data wrangling” come from database practice: filters,
     selections, and joins, for example.
@@ -99,21 +100,17 @@ serialisation more than the nature of the data.
   
   - Ontologies
 
-    The theory here appears to be logic. There is a family of logics, known as
-    “description logics,” whose expressive power is greater than that of
-    propositional logic but less than first-order logic, such that queries are
-    guaranteed to terminate, and as I understand it most ontology systems are
-    based on one of these.
+    The theory here is logic. There is a family of logics, known as “description
+    logics,” whose expressive power is greater than that of propositional logic
+    but less than first-order predicate logic, such that queries are guaranteed
+    to terminate. As I understand it most ontology systems are based on one of
+    these.
     
     Ontologies are, for whatever reason, not widely used by data scientists,
     being used in practice mainly in particular domains, such as healthcare or
     certain industries, whose practitioners acknowledge great difficulties in
     knowledge management.
 
-  - “Provenance Graphs”
-
-    I don't know enough about these.[^provenance]
-    
   - "NoSQL" models
 
     As far as I can tell, these are predominantly key-value stores; there is no
@@ -128,6 +125,12 @@ serialisation more than the nature of the data.
     I think of these more as a seralisation mechanism for particular kinds of
     underlying structure, rather as csv is a seralisation of tabular data.
 
+  - [http://schema.org/](Schema.org)
+
+  - “Provenance Graphs”
+
+    I don't know enough about these.[^provenance]
+    
 [^provenance]: See, eg, https://www.usenix.org/legacy/event/tapp10/tech/full_papers/buneman.pdf
   
 
@@ -161,11 +164,14 @@ reals.“
 
 The semantics of data frames as understood by R and Python is rather
 impoverished. What is known in these systems is roughly that each column has a
-particular primitive “type” or “class” -- for example, string, float, integer,
-and possibly Boolean.
+particular "primitive type” -- for example, string, float, integer, and possibly
+Boolean.
 
 Real-world data contain a greater richness of meaning than these representations
-support.
+support.[^types-in-R]
+
+[^types-in-R]: FIXME: Say something about R class mechanism. Is there something
+    equivalent in Pandas?
 
 ### The meaning of primitive types
 
