@@ -259,6 +259,64 @@ about:
 
 # Overview of the Relational Model
 
+FIXME: Someone who knows should check this!
+
+## Formalism
+
+Fix, once and for all, a finite set of *domains*, $\mathcal{D} =
+\{\mathcal{D}_1, \mathcal{D}_2, \dotsc, \mathcal{D}_n\}$. Each domain
+$\mathcal{D}_i$ is a (possibly infinite) set.
+
+By a *relation* is meant a finite subset of the cartesian product of some
+domains. A *signature* is a finite tuple of domains; the *header* of a relation
+is that signature which is the tuple of domains in which its arguments are
+valued.
+
+By a *database* is meant the following data:
+    1. A finite set of names;
+    2. For each name, a header;
+    3. For each name a relation, whose header is the given signature.
+
+(That, at any rate, is what I understand the formalism to be.)
+
+The intended interpretation, I think, is as follows. Each domain represents the
+“allowed primitive values of a certain type.” One could imagine that the domains
+are things like “the real numbers,”, “the natural numbers”, “the set {true,
+false}.” In implementations, the domains are typically such things as: “strings
+of ASCII characters of at length at most 1024,” “floating point numbers,” “fixed
+precision decimals with at most 10 digits before the decimal point and two
+digits after.” 
+
+Each relation represents “a set of facts”, each fact asserting the truth of some
+“proposition” $P(C_1, \dotsc, C_n)$ where $P$ is an $n-$-ary predicate and the
+$C_i$ are elements of the domains (and the particular domains are fixed for each
+$P$).
+
+There is given an algebra of relations which I won't detail, but roughly has
+unary and binary operations corresponding to the database notions of filtering
+(selecting rows), projection (selecting columns), and join.
+
+The formalism above is not very satisfactory (probably because I have it
+wrong). One might imagine that the language of facts would be (first-order)
+logic.( But (a model of a particular) first-order logic doesn't talk about many
+domains, just a single domain of discourse. And there are also supposed to be
+function symbols and constant symbols. So maybe this is some sort of typed
+logic?
+
+Furthermore, there are many facts about particular domains of discourse that one
+might wish to express that cannot be expressed by a set of relations. In
+implementations, one is allowed to assert *a priori* constraints on the
+relations in a database but the precise nature of these constraints are not
+clear to me.
+
+Further, implementations tend to differ from this interpreation. 
+
+
+
+
+
+
+
 
 
 
