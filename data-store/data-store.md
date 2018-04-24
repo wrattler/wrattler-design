@@ -129,9 +129,8 @@ serialisation more than the nature of the data.
 
   - “Provenance Graphs”
 
-    I don't know enough about these.[^provenance]
+    I don't know enough about these [see, for example, @Acar:2010:GMD:1855795.1855803].
     
-[^provenance]: See, eg, https://www.usenix.org/legacy/event/tapp10/tech/full_papers/buneman.pdf
   
 
 # Desiderata
@@ -165,13 +164,11 @@ reals.“
 The semantics of data frames as understood by R and Python is rather
 impoverished. What is known in these systems is roughly that each column has a
 particular "primitive type” -- for example, string, float, integer, and possibly
-Boolean.
+Boolean. Real-world data contain a greater richness of meaning than these
+$\nu$ are the identity maps)representations
+support.
 
-Real-world data contain a greater richness of meaning than these representations
-support.[^types-in-R]
-
-[^types-in-R]: FIXME: Say something about R class mechanism. Is there something
-    equivalent in Pandas?
+FIXME: Say something about R class mechanism. Is there something equivalent in Pandas?
 
 ### The meaning of primitive types
 
@@ -220,7 +217,7 @@ a mixture.
 However, most systems (especially databases!) insist that every column is a
 single type, apart possibly from a distinguished, catch-all, “out of type”
 value, such as R's “`NA`” value, or SQL's “`NULL`”, the semantics of which is
-usually poorly-understood.
+usually poorly-specified.
 
 The other kind of complex data occurs when a single “value” is composed of more
 than one primitive value, typically from multiple columns. An example is
@@ -228,6 +225,10 @@ geographical coordinates, with longitude in one column and latitude in
 another. One often wishes to treat such data as a whole, for example, when
 making a map, converting to an address, or converting between coordinate
 systems. 
+
+These two kinds of complex data sound a lot like sum and product types in typed
+programming languages.
+
 
 ### “User-defined“ annotations
 
@@ -259,7 +260,10 @@ about:
 
 # Appendix: Overview of the Relational Model
 
-FIXME: Someone who knows should check this!
+FIXME: Someone who knows should check this! The following formalism is what
+sense I have been able to make of this subject. It's somewhat different to the
+usual presentation, which uses names to do a lot of the work I have done with
+maps.
 
 ## Formalism
 
@@ -267,19 +271,80 @@ Fix, once and for all, a finite set of *domains*, $\mathcal{D} =
 \{\mathcal{D}_1, \mathcal{D}_2, \dotsc, \mathcal{D}_n\}$. Each domain
 $\mathcal{D}_i$ is a (possibly infinite) set.
 
-A *relation type* is a finite tuple of domains. By a *relation* is meant a
-finite subset of the cartesian product of the domains in a relation type. The
-*header* of a relation is that relation type which is the tuple of domains in
-which its arguments are valued.
+A *relation type* is a finite tuple of domains. The *carrier* of a relation type
+is the cartesian product of the domains in a relation type.[^carrier] By a *relation* is
+meant a relation type and a finite subset of the carrier of that relation
+type. The *header* of a relation is the corresponding relation type.
 
-By a *database* is meant the following data:
-    1. A finite set of *names*;
-    2. For each name, a relation type; and
-    3. For each name a relation, whose header is the given relation type.
+[^carrier]: As far as I am aware, the nomenclature of “carrier” is not common
+    but it proves convenient in stating certain definitions later on.
+
+A *database* consists of the following data:
+ 
+  1. A finite set of *names*;
+  2. For each name, a relation type; and
+  3. For each name, a relation, whose header is the given relation type.
 
 (That, at any rate, is what I understand the formalism to be.)
 
-There is also given an algebra on relations.
+There is also given an algebra on the set of all relations. There are, or appear
+to be, three kinds of operations in this algebra: set-theoretic--type operations
+on pairs of “compatible” relations; “joins” of pairs of relations; and
+“projections” from one relation to another.
+
+If two relations have identical headers, then they are subsets of the same set
+(specifically, they are subsets of the same carrier). For such relations the
+union, intersection, and difference are defined as those operations on those
+subsets.
+
+Projections “restrict the relation to particular columns”, but the definition is
+not entirely straightforward because of the need to keep the domains straight.
+
+Given two relation types, $S$ and $T$, let $\mu:T\to S$ be a map that preserves
+domains (note that the arrow goes the “wrong way”). For example, if $S = (D_3,
+D_1, D_1)$ and $T = (D_1)$, then there are two possible maps $T\to S$: one
+taking the single domain in $T$ to the second domain in $S$, and one taking it
+to the third domain. Let $r_T$ be a relation with header $T$. We can extend
+$\mu$ to a map on elements of $r_T$: given an element of $r_T$ (*i.e.*, a tuple)
+we construct an element of the carrier of $S$ by the obvious action of $\mu$ on
+that tuple.
+
+A *projection*, $\pi_\mu(r_S)$ on some relation $r_S$ of relation type $S$ (this
+time the arrow goes the right way!) is that relation $r_T$ (as a subset of the
+carrier of $T$) whose elements are such that the action of $\mu$ is an element
+of $r_S$. Informally, it is the “restriction of $r_S$ to the domains in
+$T$”. Alternatively, it is “the set of tuples in the carrier of $T$ for which
+there exists some element of $r_S$ having the appropriate tuple.“
+
+Note that the operation “re-order the domains in a relation” is a projection.
+
+Finally, let $r_S$ and $r_T$ be two relations of type $S$ and $T$
+respectively. Suppose there is given a relation type $U$ and two
+domain-preserving maps $\mu:S\to U$ and $\nu:T\to U$ respectively (note the
+direction). A *join* of $r_S$ and $r_T$ is the maximal relation $r_U$ whose
+carrier is $U$ and for which $\pi_\mu(r_U) = r_S$ and $\pi_\nu(r_U) = r_T$. (Here
+“maximal” means that there is no relation, having the same property, for which
+this one is a subset.)
+
+Note that intersection of relations can be defined in terms of joins (it is the
+join of two relations, having the same relation type, where the maps $\mu$ and
+$\nu$ are the identity maps).
+
+The join is often written $r_S\bowtie r_T$, though note that in our version it
+is required to specify the maps $\mu$ and $\nu$.
+
+The conventional story tries to get rid of the maps between the headers. It does
+this by considering a relation type to be a set (not a tuple) of *attributes*,
+where an attribute is a pair of a *name* and a domain. It is then required, in
+the definitions, that maps of relation types preserve attributes; effectively,
+the allowed maps are specified precisely by the attribute names. One then
+introduces auxiliary operators whose job is to allow renaming.
+
+Descriptions of the relational algebra often include a plethora of other
+operations, including *equijoin*, *semijoin*, *antijoin*, and *division*. I'm
+$\nu$ are the identity maps)pretty sure these are all definable in terms of the
+$\nu$ are the identity maps)operations described above.
+
 
 ## Interpretation
 
@@ -289,46 +354,47 @@ are things like “the real numbers,”, “the natural numbers”, “the set {
 false}.” In practice, the domains are in fact such things as: “strings of ASCII
 characters of at length at most 1024,” “floating point numbers,” “fixed
 precision decimals with at most 10 digits before the decimal point and two
-digits after.”
+digits after,” and so on.
 
 Each relation represents “a set of facts”, each fact asserting the truth of some
 “proposition” $P(C_1, \dotsc, C_n)$ where $P$ is an $n-$-ary predicate and the
-$C_i$ are elements of the domains (and the particular domains are fixed for each
-$P$).
+$C_i$ are elements of the domains in the header of the relation.
 
-There is given an algebra on relations which I won't detail, but roughly has
-unary and binary operations corresponding to the database notions of filtering
-(selecting rows), projection (selecting columns), and join.
+Finally, the operations of the algebra allow one to “deduce other facts from the
+ones given.” In applications, the language SQL roughly describes the algebra
+above.
 
 ## Problems
 
-The formalism above is somewhat unsatisfactory. In part, it may be that I have
-some of the formalism wrong. However, it's also true that in practice one
-frequently sees large variations on this model---such as “object-oriented
-databases”---which suggests that there is some unfulfilled need.[^date]
+The formalism above is somewhat unsatisfactory as a practical model of
+data. (Although, it's significantly better than a lot of other proposals!) In
+part, it may be that I have some of the formalism wrong. However, it's also true
+that in practice one frequently sees large variations on this model---such as
+“object-oriented databases”---which suggests that there is some unfulfilled
+need.[^date]
 
 [^date]: It's true that some practitioners, most notably Date and
-    Darwen,[^third-manifesto] assert that there would be no need for such
+    Darwen,[@the-third-manifesto] assert that there would be no need for such
     extensions if only the relational theory were implemented correctly. For
     whatever reason, they have not been able to persuade the database community
     of this.
 
-For example one might imagine that the language of facts would be (first-order)
+For example, one might imagine that the language of facts would be (first-order)
 logic. But (a model of a particular) first-order logic doesn't talk about
 multiple domains, just a single “domain of discourse.” The arguments of a
 predicate may be filled with *any* term, not just an element of a specific
 domain. So perhaps the relational model is some kind of typed logic?
 
-The question of the nature of identity also seems perennially perplexing (at
-least to me). In first-order logic, there are constant symbols, standing for
-individuals. It is individuals (and functions of individuals) that appear in the
-arguments of predicates, rather than elements from a domain, as in the
-relational model. Thus, if, in the relational model, one wants to assert the
-existence of a particular person, such as Fred Flintstone, one must create a
-relation (of persons, perhaps) whose domains are collectively sufficient as to
-uniquely identify Fred Flintstone amongst all other persons. In practice, such
-domains are not always available (or at least obvious) and it is common to find
-onself having two persons whom the known facts fail to individuate.
+The nature of identity is perennially perplexing (at least to me). In
+first-order logic, there are constant symbols, standing for individuals. It is
+individuals (and functions of individuals) that appear in the arguments of
+predicates, rather than elements from a domain, as in the relational
+model. Thus, if, in the relational model, one wants to assert the existence of a
+particular person, such as Fred Flintstone, one must create a relation (of
+persons, perhaps) whose domains are collectively sufficient as to uniquely
+identify Fred Flintstone amongst all other persons. In practice, such domains
+are not always available (or at least obvious) and it is common to find onself
+having two persons whom the known facts fail to individuate.
 
 Suppose there are two persons about whom the known facts are identical. Such
 persons cannot be distinct tuples in a relation expressing the known facts,
@@ -348,13 +414,16 @@ a person *and* that person has the following characteristics.”
 In support of my argument that this interpretation is common I note that
 database designers will frequently invent an “id” column, typically valued in
 the domain of integers, whose purpose is precisely to identify individuals. “id”
-columns are everywhere. 
+columns are everywhere, with much attendent argument about what to call them.
 
 Perhaps what one ought to do is to specify a new domain---the domain of Persons,
-say, and value the “id” columns in *that*. But now one needs a model of how
+say---and value the “id” columns in *that*. But now one needs a model of how
 domains are to be created. The only coherent model that I can see is that in
-fact domains *are* relations but if they are, that relationship is not part of
-the formalism.
+fact domains *are* relations but, if they are, that relationship is not part of
+the formalism.[^domains-as-relations]
+
+[^domains-as-relations]: Although, as noted, perhaps Date and Darwen have solved
+    this problem.
 
 Furthermore, there are many facts about particular domains of discourse that one
 might wish to express that cannot be expressed simply by giving the headers of a
