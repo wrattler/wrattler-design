@@ -257,7 +257,7 @@ about:
 
 
 
-# Overview of the Relational Model
+# Appendix: Overview of the Relational Model
 
 FIXME: Someone who knows should check this!
 
@@ -267,49 +267,119 @@ Fix, once and for all, a finite set of *domains*, $\mathcal{D} =
 \{\mathcal{D}_1, \mathcal{D}_2, \dotsc, \mathcal{D}_n\}$. Each domain
 $\mathcal{D}_i$ is a (possibly infinite) set.
 
-By a *relation* is meant a finite subset of the cartesian product of some
-domains. A *signature* is a finite tuple of domains; the *header* of a relation
-is that signature which is the tuple of domains in which its arguments are
-valued.
+A *relation type* is a finite tuple of domains. By a *relation* is meant a
+finite subset of the cartesian product of the domains in a relation type. The
+*header* of a relation is that relation type which is the tuple of domains in
+which its arguments are valued.
 
 By a *database* is meant the following data:
-    1. A finite set of names;
-    2. For each name, a header;
-    3. For each name a relation, whose header is the given signature.
+    1. A finite set of *names*;
+    2. For each name, a relation type; and
+    3. For each name a relation, whose header is the given relation type.
 
 (That, at any rate, is what I understand the formalism to be.)
+
+There is also given an algebra on relations.
+
+## Interpretation
 
 The intended interpretation, I think, is as follows. Each domain represents the
 “allowed primitive values of a certain type.” One could imagine that the domains
 are things like “the real numbers,”, “the natural numbers”, “the set {true,
-false}.” In implementations, the domains are typically such things as: “strings
-of ASCII characters of at length at most 1024,” “floating point numbers,” “fixed
+false}.” In practice, the domains are in fact such things as: “strings of ASCII
+characters of at length at most 1024,” “floating point numbers,” “fixed
 precision decimals with at most 10 digits before the decimal point and two
-digits after.” 
+digits after.”
 
 Each relation represents “a set of facts”, each fact asserting the truth of some
 “proposition” $P(C_1, \dotsc, C_n)$ where $P$ is an $n-$-ary predicate and the
 $C_i$ are elements of the domains (and the particular domains are fixed for each
 $P$).
 
-There is given an algebra of relations which I won't detail, but roughly has
+There is given an algebra on relations which I won't detail, but roughly has
 unary and binary operations corresponding to the database notions of filtering
 (selecting rows), projection (selecting columns), and join.
 
-The formalism above is not very satisfactory (probably because I have it
-wrong). One might imagine that the language of facts would be (first-order)
-logic.( But (a model of a particular) first-order logic doesn't talk about many
-domains, just a single domain of discourse. And there are also supposed to be
-function symbols and constant symbols. So maybe this is some sort of typed
-logic?
+## Problems
+
+The formalism above is somewhat unsatisfactory. In part, it may be that I have
+some of the formalism wrong. However, it's also true that in practice one
+frequently sees large variations on this model---such as “object-oriented
+databases”---which suggests that there is some unfulfilled need.[^date]
+
+[^date]: It's true that some practitioners, most notably Date and
+    Darwen,[^third-manifesto] assert that there would be no need for such
+    extensions if only the relational theory were implemented correctly. For
+    whatever reason, they have not been able to persuade the database community
+    of this.
+
+For example one might imagine that the language of facts would be (first-order)
+logic. But (a model of a particular) first-order logic doesn't talk about
+multiple domains, just a single “domain of discourse.” The arguments of a
+predicate may be filled with *any* term, not just an element of a specific
+domain. So perhaps the relational model is some kind of typed logic?
+
+The question of the nature of identity also seems perennially perplexing (at
+least to me). In first-order logic, there are constant symbols, standing for
+individuals. It is individuals (and functions of individuals) that appear in the
+arguments of predicates, rather than elements from a domain, as in the
+relational model. Thus, if, in the relational model, one wants to assert the
+existence of a particular person, such as Fred Flintstone, one must create a
+relation (of persons, perhaps) whose domains are collectively sufficient as to
+uniquely identify Fred Flintstone amongst all other persons. In practice, such
+domains are not always available (or at least obvious) and it is common to find
+onself having two persons whom the known facts fail to individuate.
+
+Suppose there are two persons about whom the known facts are identical. Such
+persons cannot be distinct tuples in a relation expressing the known facts,
+since relations are a set, not a bag. If I have understood Date correctly, I
+think he would argue that if the facts about two individuals are identical, then
+there is no observation (or query) that would distinguish them, and so nothing
+is gained *by* distinguishing them. 
+
+The interpretation that is commonly given in textbooks of a tuple in a “Persons”
+table is something like: “There exists a person having the following
+characteristics...” and that assertion is no less true if there are two persons
+satisfying the given condition. But I do not believe that is the interpretation
+that database practitioners have in mind when they create a Persons table: it
+seems to me that, if it were explicit, the interpretation would be “There exists
+a person *and* that person has the following characteristics.”
+
+In support of my argument that this interpretation is common I note that
+database designers will frequently invent an “id” column, typically valued in
+the domain of integers, whose purpose is precisely to identify individuals. “id”
+columns are everywhere. 
+
+Perhaps what one ought to do is to specify a new domain---the domain of Persons,
+say, and value the “id” columns in *that*. But now one needs a model of how
+domains are to be created. The only coherent model that I can see is that in
+fact domains *are* relations but if they are, that relationship is not part of
+the formalism.
 
 Furthermore, there are many facts about particular domains of discourse that one
-might wish to express that cannot be expressed by a set of relations. In
-implementations, one is allowed to assert *a priori* constraints on the
-relations in a database but the precise nature of these constraints are not
-clear to me.
+might wish to express that cannot be expressed simply by giving the headers of a
+set of relations. In implementations, one is allowed to assert *a priori*
+constraints on the tuples in a relation, and on the functional dependencies
+between one relation and another.
 
-Further, implementations tend to differ from this interpreation. 
+Presumably, many of these constraints are the sort of thing that ontologies
+describe.
+
+Finally, implementations simply fail to respect the above formalism in several
+regards. The following two differences are well-known. A relation is, as the
+definition says, a set; however, many implementations model relations as a bag
+(that is, alowing duplicate elements). Implementations also adduce a “special”
+value, denoted `NULL`, which is allowed in any position in any predicate; the
+semantics of this value are confusing.
+
+A further discrepancy, less widely known, is that while there are two relations
+having an empty relation type (that is, having no columns), there is typically
+no representation of these in implementations. (These two relations are the
+empty set and the set containing the empty tuple. They are useful in theory as
+representations of truth and falsity.)
+
+
+
 
 
 
