@@ -75,18 +75,18 @@ a *dictionary* of key-value pairs, where the values may be one of a set of
 primitive types or another dictionary) but one usually discusses the
 serialisation more than the nature of the data.
 
-  - The relational model 
+  - Relational databases 
 
     Well-defined theory, in which the notion of “tabular data” corresponds
     reasonably well with that of “relation.” Essentially all modern databases
     (up until the recent interest in so-called “NoSQL” models) are based around
     the relational model. In practice, implementations (Relational Database
     Management Systems, or RDMSs) tend not to be completely faithful to the
-    theory. For example, there are two relations having no columns but these are
-    usually not supported.
+    theory. (For example, there are two relations having no columns but these are
+    usually not supported.)
 
-    Many concepts in “data wrangling” come from database practice: filters,
-    selections, and joins, for example.
+    Many concepts arising in the practice of “data wrangling” come from database
+    practice: filters, selections, and joins, for example.
 
   - Types, in the programming language sense
 
@@ -258,34 +258,55 @@ about:
 
 
 
-# Appendix: Overview of the Relational Model
+# Appendix A: Overview of the Relational Model
 
-FIXME: Someone who knows should check this! The following formalism is what
-sense I have been able to make of this subject. It's somewhat different to the
-usual presentation, which uses names to do a lot of the work I have done with
-maps.
+FIXME: Someone who knows this subject should check this! The following formalism
+is what sense I have been able to make of this subject. It's somewhat different
+to the usual presentation, which uses names to do a lot of the work I have done
+with maps.
 
 ## Formalism
+
+### Relations and databases
 
 Fix, once and for all, a finite set of *domains*, $\mathcal{D} =
 \{\mathcal{D}_1, \mathcal{D}_2, \dotsc, \mathcal{D}_n\}$. Each domain
 $\mathcal{D}_i$ is a (possibly infinite) set.
 
-A *relation type* is a finite tuple of domains. The *carrier* of a relation type
-is the cartesian product of the domains in a relation type.[^carrier] By a *relation* is
-meant a relation type and a finite subset of the carrier of that relation
-type. The *header* of a relation is the corresponding relation type.
+A *relation schema* is a finite tuple of domains. (Recall that a tuple differs
+from a set in being ordered and allowing duplicates.) The *carrier* of a
+relation schema is the cartesian product of the domains in that relation
+schema.[^carrier] By a *relation* is meant a relation schema and a finite subset
+of the carrier of that schema. The *header* of a relation is the corresponding
+relation schema.
 
 [^carrier]: As far as I am aware, the nomenclature of “carrier” is not common
-    but it proves convenient in stating certain definitions later on.
+    but it proves convenient in stating certain definitions later on. FIXME:
+    Probably the notion of carrier should apply to a relation, rather than a
+    relation schema.
 
-A *database* consists of the following data:
+A *database instance* consists of the following data:
  
   1. A finite set of *names*;
-  2. For each name, a relation type; and
-  3. For each name, a relation, whose header is the given relation type.
+  2. For each name, a relation schema; and
+  3. For each name, a relation, whose header is the given relation schema.
 
 (That, at any rate, is what I understand the formalism to be.)
+
+### Integrity constraints and normal forms
+
+FIXME: What is going on here?
+
+*Integrity constraints* are restrictions on the actual relations that might be
+present in a database instance. *Normal forms* are restrictions on the sorts of
+“functional dependencies” that may exist. I am not convinced I understand how
+they fit into this formalism.
+
+Perhaps integrity constraints are modelled by giving a set of projections (see
+below) that must hold in all database instances. 
+
+
+### The relational algebra
 
 There is also given an algebra on the set of all relations. There are, or appear
 to be, three kinds of operations in this algebra: set-theoretic--type operations
@@ -300,50 +321,54 @@ subsets.
 Projections “restrict the relation to particular columns”, but the definition is
 not entirely straightforward because of the need to keep the domains straight.
 
-Given two relation types, $S$ and $T$, let $\mu:T\to S$ be a map that preserves
-domains (note that the arrow goes the “wrong way”). For example, if $S = (D_3,
-D_1, D_1)$ and $T = (D_1)$, then there are two possible maps $T\to S$: one
-taking the single domain in $T$ to the second domain in $S$, and one taking it
-to the third domain. Let $r_T$ be a relation with header $T$. We can extend
-$\mu$ to a map on elements of $r_T$: given an element of $r_T$ (*i.e.*, a tuple)
-we construct an element of the carrier of $S$ by the obvious action of $\mu$ on
-that tuple.
+Given two relation schemas, $S$ and $T$, let $\mu:T\to S$ be a map that
+preserves domains (note that the arrow goes the “wrong way”). For example, if $S
+= (\mathcal{D}_3, \mathcal{D}_1, \mathcal{D}_1)$ and $T = (\mathcal{D}_1)$, then
+there are two possible maps $T\to S$: one taking the single domain in $T$ to the
+second domain in $S$, and one taking it to the third domain. Let $r_T$ be a
+relation with header $T$. We can extend $\mu$ to a map on elements of $r_T$:
+given an element of $r_T$ (*i.e.*, a tuple) we construct an element of the
+carrier of $S$ by the obvious action of $\mu$ on that tuple.
 
-A *projection*, $\pi_\mu(r_S)$ on some relation $r_S$ of relation type $S$ (this
+A *projection*, $\pi_\mu(r_S)$ on some relation $r_S$ of relation schema $S$ (this
 time the arrow goes the right way!) is that relation $r_T$ (as a subset of the
-carrier of $T$) whose elements are such that the action of $\mu$ is an element
-of $r_S$. Informally, it is the “restriction of $r_S$ to the domains in
-$T$”. Alternatively, it is “the set of tuples in the carrier of $T$ for which
-there exists some element of $r_S$ having the appropriate tuple.“
+carrier of $T$) whose elements are such that the action of $\mu$ produces an
+element of $r_S$. Informally, it is the “restriction of $r_S$ to the domains in
+$T$.” Alternatively, it is “the set of tuples in the carrier of $T$ for which
+there exists some values of the domains of $S$ that are not in $T$ that makes
+the values in the other domains equal.”
 
 Note that the operation “re-order the domains in a relation” is a projection.
 
-Finally, let $r_S$ and $r_T$ be two relations of type $S$ and $T$
-respectively. Suppose there is given a relation type $U$ and two
-domain-preserving maps $\mu:S\to U$ and $\nu:T\to U$ respectively (note the
-direction). A *join* of $r_S$ and $r_T$ is the maximal relation $r_U$ whose
-carrier is $U$ and for which $\pi_\mu(r_U) = r_S$ and $\pi_\nu(r_U) = r_T$. (Here
-“maximal” means that there is no relation, having the same property, for which
-this one is a subset.)
+Finally, let $r_S$ and $r_T$ be two relations having headers $S$ and $T$
+respectively. Suppose there is given a relation schema $U$ and two projections
+$\pi_\mu:U\to S$ and $\pi_\nu:U\to T$ respectively. A *join* of $r_S$ and $r_T$
+is the maximal relation $r_U$ whose carrier is $U$ and for which $\pi_\mu(r_U) =
+r_S$ and $\pi_\nu(r_U) = r_T$. (Here “maximal” means that there is no relation,
+having the same property, for which this one is a subset.)
 
 Note that intersection of relations can be defined in terms of joins (it is the
-join of two relations, having the same relation type, where the maps $\mu$ and
-$\nu$ are the identity maps).
+join of two relations having the same header, where the maps $\mu$ and $\nu$,
+corresponding to the projections, are the identity maps).
 
-The join is often written $r_S\bowtie r_T$, though note that in our version it
-is required to specify the maps $\mu$ and $\nu$.
+The join is often written $r_S\bowtie r_T$, though note that in our version one
+has to specify the maps $\mu$ and $\nu$.
 
-The conventional story tries to get rid of the maps between the headers. It does
-this by considering a relation type to be a set (not a tuple) of *attributes*,
-where an attribute is a pair of a *name* and a domain. It is then required, in
-the definitions, that maps of relation types preserve attributes; effectively,
-the allowed maps are specified precisely by the attribute names. One then
-introduces auxiliary operators whose job is to allow renaming.
+The conventional story tries to get rid of these maps between the headers. It
+does this by considering a relation schema to be a set (not a tuple) of
+*attributes*, where an attribute is a pair of a *name* and a domain. It is then
+required, in the definitions, that maps of relation schemas preserve attributes.
+Effectively, the allowed maps are specified precisely by the attribute
+names. (One also introduces auxiliary operators whose job is to allow renaming.)
 
 Descriptions of the relational algebra often include a plethora of other
 operations, including *equijoin*, *semijoin*, *antijoin*, and *division*. I'm
-$\nu$ are the identity maps)pretty sure these are all definable in terms of the
-$\nu$ are the identity maps)operations described above.
+pretty sure these are all definable in terms of the operations described above.
+
+It strikes me that the definition of a join given above bears a strong
+resemblance to the universal construction of a product (as in category
+theory). Perhaps there's a better version of all this which starts with the
+projections, thought of as morphisms, and gets the other gadgetry for free.
 
 
 ## Interpretation
@@ -356,25 +381,29 @@ characters of at length at most 1024,” “floating point numbers,” “fixed
 precision decimals with at most 10 digits before the decimal point and two
 digits after,” and so on.
 
-Each relation represents “a set of facts”, each fact asserting the truth of some
-“proposition” $P(C_1, \dotsc, C_n)$ where $P$ is an $n-$-ary predicate and the
+Each relation represents “a set of facts”, each fact being the truth of some
+“proposition” $P(C_1, \dotsc, C_n)$ where $P$ is an $n$-ary predicate and the
 $C_i$ are elements of the domains in the header of the relation.
 
+The “closed-world assumption” is the assumption that a proposition is false if
+it could be represented by an element of a relation but does not in fact occur
+in that relation.
+
 Finally, the operations of the algebra allow one to “deduce other facts from the
-ones given.” In applications, the language SQL roughly describes the algebra
+ones given.” In RDMSs, the language SQL roughly describes the algebra
 above.
 
 ## Problems
 
 The formalism above is somewhat unsatisfactory as a practical model of
-data. (Although, it's significantly better than a lot of other proposals!) In
+data. (Although it's significantly better than a lot of other proposals!) In
 part, it may be that I have some of the formalism wrong. However, it's also true
 that in practice one frequently sees large variations on this model---such as
 “object-oriented databases”---which suggests that there is some unfulfilled
 need.[^date]
 
 [^date]: It's true that some practitioners, most notably Date and
-    Darwen,[@the-third-manifesto] assert that there would be no need for such
+    Darwen [@the-third-manifesto], assert that there would be no need for such
     extensions if only the relational theory were implemented correctly. For
     whatever reason, they have not been able to persuade the database community
     of this.
@@ -391,10 +420,10 @@ individuals (and functions of individuals) that appear in the arguments of
 predicates, rather than elements from a domain, as in the relational
 model. Thus, if, in the relational model, one wants to assert the existence of a
 particular person, such as Fred Flintstone, one must create a relation (of
-persons, perhaps) whose domains are collectively sufficient as to uniquely
-identify Fred Flintstone amongst all other persons. In practice, such domains
-are not always available (or at least obvious) and it is common to find onself
-having two persons whom the known facts fail to individuate.
+persons, perhaps) whose domains are collectively sufficient uniquely to identify
+Fred Flintstone amongst all other persons. In practice, such domains are not
+always available (or at least obvious) and it is common to find onself having
+two persons whom the known facts fail to individuate.
 
 Suppose there are two persons about whom the known facts are identical. Such
 persons cannot be distinct tuples in a relation expressing the known facts,
@@ -404,12 +433,13 @@ there is no observation (or query) that would distinguish them, and so nothing
 is gained *by* distinguishing them. 
 
 The interpretation that is commonly given in textbooks of a tuple in a “Persons”
-table is something like: “There exists a person having the following
+table is something like: “*There exists* a person having the following
 characteristics...” and that assertion is no less true if there are two persons
-satisfying the given condition. But I do not believe that is the interpretation
-that database practitioners have in mind when they create a Persons table: it
-seems to me that, if it were explicit, the interpretation would be “There exists
-a person *and* that person has the following characteristics.”
+satisfying the given condition. But I do not believe that this is the
+interpretation that database practitioners have in mind when they create a
+Persons table: it seems to me that, if it were explicit, the interpretation
+would be “There exists a person *and* that person has the following
+characteristics.”
 
 In support of my argument that this interpretation is common I note that
 database designers will frequently invent an “id” column, typically valued in
@@ -439,7 +469,13 @@ regards. The following two differences are well-known. A relation is, as the
 definition says, a set; however, many implementations model relations as a bag
 (that is, alowing duplicate elements). Implementations also adduce a “special”
 value, denoted `NULL`, which is allowed in any position in any predicate; the
-semantics of this value are confusing.
+semantics of this value are confusing. Sometimes its intended interpretation is
+to indicate a violation of the closed-world assumption: that there does exist
+some value that would make this proposition true but its value is
+unknown. (Example: a table of names and ages, where some people's ages are not
+known.) Sometimes it is intended to indicate that there is *no* value that would
+make the corresponding proposition true. (Example: a table of people and
+employers, where some people don't have employers.)
 
 A further discrepancy, less widely known, is that while there are two relations
 having an empty relation type (that is, having no columns), there is typically
@@ -447,7 +483,69 @@ no representation of these in implementations. (These two relations are the
 empty set and the set containing the empty tuple. They are useful in theory as
 representations of truth and falsity.)
 
+## Support for the desiderata
 
+Tables are clearly supported; as are, in some sense, the meanings of primitive
+types. However, interpretations are not available, nor are complex types or
+user-defined annotations. 
+
+
+# Appendix B: Overview of Ontology
+
+I have at least worked with databases professionally. By contrast, my experience
+of ontologies consists mostly of kvetching to actual experts that I don't
+understand what an ontology is. So you should probably treat my attempts to
+define one with scepticism.
+
+What I think is meant by an ontology is: (a) a set of sentences in a logic; and
+(b) a representation of the domain of interest as model of that logic. The
+representations capture the meanings of the things of which we wish to speak of;
+the sentences say what we know about the world.
+
+In this game, I gather that propositional logic is too weak to be of much use,
+but first-order logic has the problem of being undecidable. Instead one chooses
+a particular logic from a class of *description logics*, whose expressive power
+is less than that of first-order logic but is nonetheless decidable.
+
+Essentially all my understanding (such as it is) comes from
+[@DBLP:journals/corr/abs-1201-4089], [@nardi2003introduction], and
+[@cameron1999sets].
+
+Almost certainly I am abusing the terms “model” and “interpretation.”
+
+Recall that logic is an abstract game of syntax, consisting of: a description of
+how to construct certain strings of symbols; a certain starting set of strings;
+and rules for transforming sets of strings into other sets of strings. A *model*
+for a logic is an interpretation of the strings in some mathematical structure,
+for which the interpretations of the axioms are true.
+
+In first-order logic, the strings are made up of two kinds of symbols. The first
+kind are the logical symbols: $=$, $\neg$, $\vee$, $\wedge$, $\to$,
+$\leftrightarrow$, $\exists$, and $\forall$; and parentheses and commas.
+
+The second kind, perhaps more interesting to us, are ones that relate to the
+particular domain of interest. There is supposed to be given a set of *constant
+symbols*, a set of *function symbols*, and a set of *relation symbols*. The
+latter two come with a number called their *arity* which describes how many
+arguments they have.
+
+To specify a model one must specify a set (called the “domain of discourse“),
+and give, for each constant symbol, an element of the set; for each function
+symbol, a function on the set; and for each relation symbol, a relation on the
+set. The idea is that this set captures all the “things” in the world, the
+one-place relations are predicates, and so on. An ontology is then this
+“vocabulary”, together with a collection of sentences in the logic; these
+sentences express truths about the world.
+
+For example, in the database world, to denote that Fred's age is 42, we would
+consider a relation *Ages* with relation schema, say, (*People*, $\mathbb{N}$),
+and include, as an element of that relation, the tuple (Fred, 42). In the
+ontology world, `Fred` and the element 42 would be constant symbols, there would
+be a relation `AgeOf` having arity 2, and we would write `AgeOf`(`Fred`,
+42).[^age-of] 
+
+[^age-of]: We might also write `Person`(`Fred`), but that is not necessary for
+    the example. 
 
 
 
