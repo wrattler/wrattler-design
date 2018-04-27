@@ -244,6 +244,8 @@ TODO: I presume there is some existing terminology for this. For any particular
 value (eg, in a csv file) there are three meanings which we might be talking
 about:
 
+FIXME: I think there's something about this in the OWL spec.
+
 1. The kind of this value, thought of as a real-world quantity (eg, a real
    number);
    
@@ -253,9 +255,6 @@ about:
 3. The representation of that approximation as, for example, a sequence of UTF8
    characters. 
    
-
-
-
 
 
 # Appendix A: Overview of the Relational Model
@@ -308,10 +307,13 @@ below) that must hold in all database instances.
 
 ### The relational algebra
 
-There is also given an algebra on the set of all relations. There are, or appear
+There is also given an algebra on the set of all relations.[^all-relations] There are, or appear
 to be, three kinds of operations in this algebra: set-theoretic--type operations
 on pairs of “compatible” relations; “joins” of pairs of relations; and
 “projections” from one relation to another.
+
+[^all-relations]: Presumably the algebra is defined on the set of all relations
+over a fixed set of domains.
 
 If two relations have identical headers, then they are subsets of the same set
 (specifically, they are subsets of the same carrier). For such relations the
@@ -499,7 +501,7 @@ define one with scepticism.
 
 What I think is meant by an ontology is: (a) a set of sentences in a logic; and
 (b) a representation of the domain of interest as model of that logic. The
-representations capture the meanings of the things of which we wish to speak of;
+representation captures the meanings of the things of which we wish to speak of;
 the sentences say what we know about the world.
 
 In this game, I gather that propositional logic is too weak to be of much use,
@@ -511,7 +513,7 @@ Essentially all my understanding (such as it is) comes from
 [@DBLP:journals/corr/abs-1201-4089], [@nardi2003introduction], and
 [@cameron1999sets].
 
-Almost certainly I am abusing the terms “model” and “interpretation.”
+Almost certainly I am misusing the terms “model” and “interpretation.”
 
 Recall that logic is an abstract game of syntax, consisting of: a description of
 how to construct certain strings of symbols; a certain starting set of strings;
@@ -522,7 +524,7 @@ for which the interpretations of the axioms are true.
 In first-order logic, the strings are made up of two kinds of symbols. The first
 kind are the logical symbols: $=$, $\neg$, $\vee$, $\wedge$, $\to$,
 $\leftrightarrow$, $\exists$, and $\forall$; and parentheses and commas.
-
+ 
 The second kind, perhaps more interesting to us, are ones that relate to the
 particular domain of interest. There is supposed to be given a set of *constant
 symbols*, a set of *function symbols*, and a set of *relation symbols*. The
@@ -532,22 +534,67 @@ arguments they have.
 To specify a model one must specify a set (called the “domain of discourse“),
 and give, for each constant symbol, an element of the set; for each function
 symbol, a function on the set; and for each relation symbol, a relation on the
-set. The idea is that this set captures all the “things” in the world, the
-one-place relations are predicates, and so on. An ontology is then this
-“vocabulary”, together with a collection of sentences in the logic; these
-sentences express truths about the world.
+set; the latter two must have the appropriate arities. The idea is that this set
+captures all the “things” in the world: the constants are individuals, the
+one-place relations are predicates, and so on.
 
 For example, in the database world, to denote that Fred's age is 42, we would
 consider a relation *Ages* with relation schema, say, (*People*, $\mathbb{N}$),
-and include, as an element of that relation, the tuple (Fred, 42). In the
-ontology world, `Fred` and the element 42 would be constant symbols, there would
-be a relation `AgeOf` having arity 2, and we would write `AgeOf`(`Fred`,
-42).[^age-of] 
+and include, as an element of that relation, the tuple (Fred, 42). If we wanted
+to encode the fact that every person has an age, we might make this table the
+authoritative table of people (and insist that no value is
+`NULL`). Alternatively, if some other table, *Persons*, with relation schema
+(*People*), contained the definitive list of people, then we would insist on
+there being a projection *from* this table *to* the *Ages* table (as well as
+*vice versa*).
+
+In the ontology world, `Fred` and the element 42 would be constant symbols,
+there would be a relation `AgeOf` having arity 2, and we would write
+`AgeOf`(`Fred`, 42).[^age-of] If we wanted to encode the same fact as above, we
+would introduce predicates `Person?` and `Natural?` and write 
+$$ 
+\bigl(\forall x\bigr) 
+    \bigl(\text{\texttt{Person?}}(x) \to 
+    (\exists y) (\text{\texttt{Natural?}}(y) \wedge \text{\texttt{AgeOf}}(x, y)\bigr).
+$$
 
 [^age-of]: We might also write `Person`(`Fred`), but that is not necessary for
     the example. 
 
+One might have defined an ontology as this “vocabulary”, together with a
+collection of sentences in the logic; these sentences express truths about the
+world. However, as noted, reasoning in first-order logics is computationally
+difficult. So one considers a more restricted version. 
 
+There are multiple varieties of these restricted versions but they share certain
+common features. In paricular, the non-logical symbols are restricted to
+constant symbols (which are now known as *individuals*), one-place predicates
+(known as *concepts*), and two-place relations (known as *roles*). Furthermore,
+the kinds of sentences one is allowed to construct are limited. For example,
+supposing $P$ and $Q$ are concepts (*i.e.*, predicates), the rule that
+“everything that is $P$ is also $Q$” is written
+$$
+P \sqsubseteq Q,
+$$
+instead of, as in first-order logic,
+$$
+(\forall x)(P(x) \to Q(x)).
+$$
+
+As another example, suppose $P$ is a predicate and $R$ is a role (*i.e.*, a
+two-place predicate). Then the predicate whose first-order logic form is
+written:
+$$
+(\exists y)(P(y) \wedge Q(x, y)
+$$
+is written in 
+
+
+
+## Thoughts and confusions
+
+I think the following confusions are well-rehearsed but I am not sufficiently
+knowledgeable about the subject to say to what extent they have been resolved.
 
 
 
