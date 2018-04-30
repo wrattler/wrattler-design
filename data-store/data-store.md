@@ -28,9 +28,10 @@ pair of agents.
 
 A typical notebook in contemporary practice, such as one created by Jupyter,
 comprises a series of “executable cells” of code interspersed with formatted
-text and output such as charts. These cells are not independent but are
-typically steps in a larger piece of analysis; there is therefore the question
-of how state is maintained between the execution of one cell and the next.
+text and output from the execution of the code. These cells are not independent
+but are typically steps in a larger piece of analysis; there is therefore the
+question of how state is maintained between the execution of one cell and the
+next.
 
 The current answer is that the cells are executed in a single runtime process
 (the “kernel”) so that the execution of each cell takes place in the environment
@@ -94,7 +95,7 @@ serialisation more than the nature of the data.
     evolving; not implemented widely outside certain programming languages, most
     notably the ML family of languages. 
     
-    However, *type providers*, which expose data as F# types, are one example of
+    However, *type providers*, which expose data as F# types, are one example
     where types are used to describe and provide an interface to structured
     data.
   
@@ -106,15 +107,23 @@ serialisation more than the nature of the data.
     to terminate. As I understand it most ontology systems are based on one of
     these.
     
-    Ontologies are, for whatever reason, not widely used by data scientists,
-    being used in practice mainly in particular domains, such as healthcare or
-    certain industries, whose practitioners acknowledge great difficulties in
-    knowledge management.
+    Ontologies are, for whatever reason, not at present widely used by data
+    scientists, being used in practice mainly in particular domains, such as
+    healthcare or certain industries, whose practitioners acknowledge great
+    difficulties in knowledge management.
 
+  - “Triple stores” or graph databases
+  
+    I think triple stores are used to represent ontologies in an efficient
+    way. Graph databases store graphs. Both of these could in principle be
+    stored in relational databases but querying them is inefficient for, I
+    think, reasonably fundamental reasons to do with lack of support for
+    recursion, or a fixed-point operator, in the relational model.
+    
   - "NoSQL" models
 
     As far as I can tell, these are predominantly key-value stores; there is no
-    metadata to speak of, and very little theory of knowledge *per se*.
+    metadata to speak of, and very little theory of knowledge *per se*. 
   
   - JSON, XML, RDF, YAML, and other structured formats
 
@@ -125,7 +134,12 @@ serialisation more than the nature of the data.
     I think of these more as a seralisation mechanism for particular kinds of
     underlying structure, rather as csv is a seralisation of tabular data.
 
-  - [http://schema.org/](Schema.org)
+  - [http://schema.org/](Schema.org) 
+  
+    A (large) collection of “microdata schemas.” These describe “objects,” which
+    appear to be lists of key/value pairs, where the keys come from a known list
+    (of “properties”) and the values objects of known type (in the class
+    hierarchy of objects). 
 
   - “Provenance Graphs”
 
@@ -142,8 +156,9 @@ Tomas' design notes.)
 ## Tabular data
 
 In our prototype for Wrattler we store “tabular” data only, which are data that
-consist of a set of rows, each of which “has the same set of fields.” A more
-formal definition is given [below](Overview of the Relational Model).
+consist of a set of rows, each of which “has the same set of fields.” (A more
+formal definition is given [in Appendix A](Appendix A: Overview of the
+Relational Model).
 
 Tabular data covers many use cases and forms the basis of relational
 databases. Existing language-based systems, *e.g.*, R or Python Pandas,
@@ -230,7 +245,7 @@ These two kinds of complex data sound a lot like sum and product types in typed
 programming languages.
 
 
-### “User-defined“ annotations
+### “User-defined” annotations
 
 A new system may fail to be used because it is too inflexible and cannot be
 extended in ways that the user requires for her particular purpose. On the other
@@ -275,9 +290,9 @@ $\mathcal{D}_i$ is a (possibly infinite) set.
 A *relation schema* is a finite tuple of domains. (Recall that a tuple differs
 from a set in being ordered and allowing duplicates.) The *carrier* of a
 relation schema is the cartesian product of the domains in that relation
-schema.[^carrier] By a *relation* is meant a relation schema and a finite subset
-of the carrier of that schema. The *header* of a relation is the corresponding
-relation schema.
+schema.[^carrier] A *relation* is a relation schema together with a finite
+subset of the carrier of that schema. By the *header* of a relation is meant the
+corresponding relation schema.
 
 [^carrier]: As far as I am aware, the nomenclature of “carrier” is not common
     but it proves convenient in stating certain definitions later on. FIXME:
@@ -299,7 +314,7 @@ FIXME: What is going on here?
 *Integrity constraints* are restrictions on the actual relations that might be
 present in a database instance. *Normal forms* are restrictions on the sorts of
 “functional dependencies” that may exist. I am not convinced I understand how
-they fit into this formalism.
+either of these fit into this formalism.
 
 Perhaps integrity constraints are modelled by giving a set of projections (see
 below) that must hold in all database instances. 
@@ -307,13 +322,13 @@ below) that must hold in all database instances.
 
 ### The relational algebra
 
-There is also given an algebra on the set of all relations.[^all-relations] There are, or appear
-to be, three kinds of operations in this algebra: set-theoretic--type operations
-on pairs of “compatible” relations; “joins” of pairs of relations; and
+There is also given an algebra on the set of all relations.[^all-relations]
+There are, or appear to be, three kinds of operations in this algebra:
+set-theoretic--type operations on relations; “joins” of pairs of relations; and
 “projections” from one relation to another.
 
-[^all-relations]: Presumably the algebra is defined on the set of all relations
-over a fixed set of domains.
+[^all-relations]: Presumably meaning the set of all relations over a fixed set
+of domains.
 
 If two relations have identical headers, then they are subsets of the same set
 (specifically, they are subsets of the same carrier). For such relations the
@@ -332,45 +347,48 @@ relation with header $T$. We can extend $\mu$ to a map on elements of $r_T$:
 given an element of $r_T$ (*i.e.*, a tuple) we construct an element of the
 carrier of $S$ by the obvious action of $\mu$ on that tuple.
 
-A *projection*, $\pi_\mu(r_S)$ on some relation $r_S$ of relation schema $S$ (this
-time the arrow goes the right way!) is that relation $r_T$ (as a subset of the
-carrier of $T$) whose elements are such that the action of $\mu$ produces an
-element of $r_S$. Informally, it is the “restriction of $r_S$ to the domains in
-$T$.” Alternatively, it is “the set of tuples in the carrier of $T$ for which
-there exists some values of the domains of $S$ that are not in $T$ that makes
-the values in the other domains equal.”
+A *projection*, $\pi_\mu(r_S)$ on some relation $r_S$ of relation schema $S$
+(this time the arrow goes the right way!) is that relation $r_T$ (*i.e.*, that
+subset of the carrier of $T$) whose elements are such that the action of $\mu$
+produces an element of $r_S$. Informally, it is the “restriction of $r_S$ to the
+domains in $T$.” Alternatively, it is “the set of tuples in the carrier of $T$
+for which there exists some values of the domains of $S$ that are not in $T$
+that makes the values in the other domains equal.”
 
-Note that the operation “re-order the domains in a relation” is a projection.
+Note that the operation “re-order the domains in a relation” is a
+projection. (Specifically, it is one for which the defining map $\mu$ is a
+permutation.)
 
 Finally, let $r_S$ and $r_T$ be two relations having headers $S$ and $T$
 respectively. Suppose there is given a relation schema $U$ and two projections
-$\pi_\mu:U\to S$ and $\pi_\nu:U\to T$ respectively. A *join* of $r_S$ and $r_T$
-is the maximal relation $r_U$ whose carrier is $U$ and for which $\pi_\mu(r_U) =
-r_S$ and $\pi_\nu(r_U) = r_T$. (Here “maximal” means that there is no relation,
-having the same property, for which this one is a subset.)
+$\mu:S\to U$ and $\nu:T\to U$ respectively. A *join* of $r_S$ and $r_T$ is the
+maximal relation $r_U$ whose carrier is $U$ and for which $\pi_\mu(r_U) = r_S$
+and $\pi_\nu(r_U) = r_T$. (Here “maximal” means that there is no relation,
+having the same property, for which this one is a proper subset.)
 
-Note that intersection of relations can be defined in terms of joins (it is the
-join of two relations having the same header, where the maps $\mu$ and $\nu$,
-corresponding to the projections, are the identity maps).
+Note that intersection of compatible relations can actually be defined in terms
+of joins (it is the join of two relations having the same header, where the maps
+$\mu$ and $\nu$, corresponding to the projections, are the identity maps).
 
-The join is often written $r_S\bowtie r_T$, though note that in our version one
-has to specify the maps $\mu$ and $\nu$.
+The join is often written $r_S\bowtie r_T$, although in our version one has to
+specify the maps $\mu$ and $\nu$.
 
 The conventional story tries to get rid of these maps between the headers. It
 does this by considering a relation schema to be a set (not a tuple) of
-*attributes*, where an attribute is a pair of a *name* and a domain. It is then
-required, in the definitions, that maps of relation schemas preserve attributes.
-Effectively, the allowed maps are specified precisely by the attribute
-names. (One also introduces auxiliary operators whose job is to allow renaming.)
+*attributes*, where an attribute is a pair of an *attribute name* and a
+domain. It is then required, in the definitions, that maps of relation schemas
+preserve attributes.  Effectively, the allowed maps are specified precisely by
+the attribute names. (One also introduces auxiliary operators whose job is to
+allow renaming.)
 
 Descriptions of the relational algebra often include a plethora of other
 operations, including *equijoin*, *semijoin*, *antijoin*, and *division*. I'm
-pretty sure these are all definable in terms of the operations described above.
+pretty sure these are all definable in terms of the operations described.
 
 It strikes me that the definition of a join given above bears a strong
-resemblance to the universal construction of a product (as in category
-theory). Perhaps there's a better version of all this which starts with the
-projections, thought of as morphisms, and gets the other gadgetry for free.
+resemblance to a universal construction (as in category theory). Perhaps there's
+a better version of all this which starts with the projections, thought of as
+morphisms, and gets the other gadgetry for free.
 
 
 ## Interpretation
@@ -378,18 +396,20 @@ projections, thought of as morphisms, and gets the other gadgetry for free.
 The intended interpretation, I think, is as follows. Each domain represents the
 “allowed primitive values of a certain type.” One could imagine that the domains
 are things like “the real numbers,”, “the natural numbers”, “the set {true,
-false}.” In practice, the domains are in fact such things as: “strings of ASCII
-characters of at length at most 1024,” “floating point numbers,” “fixed
-precision decimals with at most 10 digits before the decimal point and two
-digits after,” and so on.
+false},” and so on.[^domains-in-practice]
+
+[^domains-in-practice]: In practice, the domains are in fact such things as:
+“strings of ASCII characters of at length at most 1024,” “floating point
+numbers,” “fixed precision decimals with at most 10 digits before the decimal
+point and two digits after,” and so on.
 
 Each relation represents “a set of facts”, each fact being the truth of some
 “proposition” $P(C_1, \dotsc, C_n)$ where $P$ is an $n$-ary predicate and the
 $C_i$ are elements of the domains in the header of the relation.
 
 The “closed-world assumption” is the assumption that a proposition is false if
-it could be represented by an element of a relation but does not in fact occur
-in that relation.
+it *could* be represented by an element of a relation but does *not* in fact
+occur in that relation.
 
 Finally, the operations of the algebra allow one to “deduce other facts from the
 ones given.” In RDMSs, the language SQL roughly describes the algebra
@@ -401,8 +421,8 @@ The formalism above is somewhat unsatisfactory as a practical model of
 data. (Although it's significantly better than a lot of other proposals!) In
 part, it may be that I have some of the formalism wrong. However, it's also true
 that in practice one frequently sees large variations on this model---such as
-“object-oriented databases”---which suggests that there is some unfulfilled
-need.[^date]
+“object-oriented databases”---which strongly suggests that there is some
+unfulfilled need.[^date]
 
 [^date]: It's true that some practitioners, most notably Date and
     Darwen [@the-third-manifesto], assert that there would be no need for such
@@ -439,9 +459,8 @@ table is something like: “*There exists* a person having the following
 characteristics...” and that assertion is no less true if there are two persons
 satisfying the given condition. But I do not believe that this is the
 interpretation that database practitioners have in mind when they create a
-Persons table: it seems to me that, if it were explicit, the interpretation
-would be “There exists a person *and* that person has the following
-characteristics.”
+Persons table: it seems to me that, were it explicit, the interpretation would
+be “There exists a person *and* that person has the following characteristics.”
 
 In support of my argument that this interpretation is common I note that
 database designers will frequently invent an “id” column, typically valued in
@@ -470,7 +489,7 @@ Finally, implementations simply fail to respect the above formalism in several
 regards. The following two differences are well-known. A relation is, as the
 definition says, a set; however, many implementations model relations as a bag
 (that is, alowing duplicate elements). Implementations also adduce a “special”
-value, denoted `NULL`, which is allowed in any position in any predicate; the
+value, denoted `NULL`, which is allowed in any position in any predicate. The
 semantics of this value are confusing. Sometimes its intended interpretation is
 to indicate a violation of the closed-world assumption: that there does exist
 some value that would make this proposition true but its value is
@@ -480,10 +499,9 @@ make the corresponding proposition true. (Example: a table of people and
 employers, where some people don't have employers.)
 
 A further discrepancy, less widely known, is that while there are two relations
-having an empty relation type (that is, having no columns), there is typically
-no representation of these in implementations. (These two relations are the
-empty set and the set containing the empty tuple. They are useful in theory as
-representations of truth and falsity.)
+having an empty relation schema (the empty relation and the relation containing
+the empty tuple), there is typically no representation of these in
+implementations.
 
 ## Support for the desiderata
 
@@ -499,23 +517,24 @@ of ontologies consists mostly of kvetching to actual experts that I don't
 understand what an ontology is. So you should probably treat my attempts to
 define one with scepticism.
 
-What I think is meant by an ontology is: (a) a set of sentences in a logic; and
-(b) a representation of the domain of interest as model of that logic. The
-representation captures the meanings of the things of which we wish to speak of;
-the sentences say what we know about the world.
-
-In this game, I gather that propositional logic is too weak to be of much use,
-but first-order logic has the problem of being undecidable. Instead one chooses
-a particular logic from a class of *description logics*, whose expressive power
-is less than that of first-order logic but is nonetheless decidable.
-
 Essentially all my understanding (such as it is) comes from
 [@DBLP:journals/corr/abs-1201-4089], [@nardi2003introduction], and
 [@cameron1999sets].
 
 Almost certainly I am misusing the terms “model” and “interpretation.”
 
-Recall that logic is an abstract game of syntax, consisting of: a description of
+What I think is meant by an ontology is: (a) a set of sentences in a logic; and
+(b) a representation of the domain of interest as a model of that logic. The
+representation captures the meanings of the things of which we wish to speak of;
+the sentences say what we know about the world.
+
+In this subject, I gather that propositional logic is too weak to be of much
+use, but first-order logic has the problem of being undecidable. Instead one
+chooses a particular logic from a class of *description logics*, whose
+expressive power is less than that of first-order logic but which are
+nonetheless decidable.
+
+Recall that “logic” is an abstract game of syntax, consisting of: a description of
 how to construct certain strings of symbols; a certain starting set of strings;
 and rules for transforming sets of strings into other sets of strings. A *model*
 for a logic is an interpretation of the strings in some mathematical structure,
@@ -523,7 +542,7 @@ for which the interpretations of the axioms are true.
 
 In first-order logic, the strings are made up of two kinds of symbols. The first
 kind are the logical symbols: $=$, $\neg$, $\vee$, $\wedge$, $\to$,
-$\leftrightarrow$, $\exists$, and $\forall$; and parentheses and commas.
+$\leftrightarrow$, $\exists$, and $\forall$; along with parentheses and commas.
  
 The second kind of symbols, perhaps more interesting to us, are ones that relate
 to the particular domain of interest. There is supposed to be given a set of
@@ -535,7 +554,7 @@ To specify a model one must specify a set (called the “domain of discourse“)
 and give, for each constant symbol, an element of the set; for each function
 symbol, a function on the set; and for each relation symbol, a relation on the
 set; the latter two must have the appropriate arities. The idea is that this set
-captures all the “things” in the world: the constants are individuals, the
+captures all the “things” in the world, the constants are individuals, the
 one-place relations are predicates, and so on.
 
 For example, in the database world, to denote that Fred's age is 42, we would
@@ -601,20 +620,12 @@ $$
 
 There is one big caveat to the translation between the relational model and the
 logic formalism. In the relational model, the assertion that every person has an
-age is a *constraint*: For every person in the database, there is an
-accompanying age in the database. In the logic model, the assertion is an axiom
-that allows one to make deductions: if one finds oneself in posession of a
-person, one can deduce that that person must have an age, but the actual value
-of that age might not be known or deducible. Logics take the *open-world
-assumption*: there may be facts that are not deducible from the given facts.
-
-The description logic formalism reminds me of “point-free” programming. In
-point-free programming, one removes variables and lambda abstractions and
-instead builds programs using a small number of “combinators.” In the description
-logic formalism, too, the variables are removed. Presumably, this prevents one
-from writing “arbitrary rules” and is why the logic is then decidable. (On the
-other hand, programming languages designed around combinators are typically
-Turing-complete, so perhaps the analogy is not quite right.)
+age is a *constraint:* For every person in the database, there is an
+accompanying age *in the database*. In the logic model, the assertion is an
+*axiom:* if one finds oneself in posession of a person, then one can deduce that
+that person must have an age but the actual value of that age may not be known
+or deducible from the facts that are known. Logics take the “open-world
+assumption:” there may be facts that are not deducible from the known facts.
 
 
 ## Thoughts and confusions
