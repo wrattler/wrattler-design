@@ -525,11 +525,11 @@ In first-order logic, the strings are made up of two kinds of symbols. The first
 kind are the logical symbols: $=$, $\neg$, $\vee$, $\wedge$, $\to$,
 $\leftrightarrow$, $\exists$, and $\forall$; and parentheses and commas.
  
-The second kind, perhaps more interesting to us, are ones that relate to the
-particular domain of interest. There is supposed to be given a set of *constant
-symbols*, a set of *function symbols*, and a set of *relation symbols*. The
-latter two come with a number called their *arity* which describes how many
-arguments they have.
+The second kind of symbols, perhaps more interesting to us, are ones that relate
+to the particular domain of interest. There is supposed to be given a set of
+*constant symbols*, a set of *function symbols*, and a set of *relation
+symbols*. The latter two come with a number called their *arity* which describes
+how many arguments they have.
 
 To specify a model one must specify a set (called the “domain of discourse“),
 and give, for each constant symbol, an element of the set; for each function
@@ -581,14 +581,40 @@ $$
 (\forall x)(P(x) \to Q(x)).
 $$
 
-As another example, suppose $P$ is a predicate and $R$ is a role (*i.e.*, a
-two-place predicate). Then the predicate whose first-order logic form is
-written:
+As another example, suppose $C$ is a concept (*i.e.*, a predicate) and $R$ is a
+role (*i.e.*, a two-place relation). Then the predicate $Q$ whose first-order
+logic form is written: 
+$$ 
+Q(x) = (\exists y)(R(x, y) \wedge C(y)) 
+$$ 
+is written in description logics as 
+$$ 
+Q \equiv \exists R.C 
 $$
-(\exists y)(P(y) \wedge Q(x, y)
-$$
-is written in 
 
+Finally, to encode the assertion above, that “every person has an age that is a
+number”, we would write 
+$$
+\text{\texttt{Person?}} \sqsubseteq 
+    \exists \text{\texttt{AgeOf}}.\text{\texttt{Natural?}}.
+$$
+
+There is one big caveat to the translation between the relational model and the
+logic formalism. In the relational model, the assertion that every person has an
+age is a *constraint*: For every person in the database, there is an
+accompanying age in the database. In the logic model, the assertion is an axiom
+that allows one to make deductions: if one finds oneself in posession of a
+person, one can deduce that that person must have an age, but the actual value
+of that age might not be known or deducible. Logics take the *open-world
+assumption*: there may be facts that are not deducible from the given facts.
+
+The description logic formalism reminds me of “point-free” programming. In
+point-free programming, one removes variables and lambda abstractions and
+instead builds programs using a small number of “combinators.” In the description
+logic formalism, too, the variables are removed. Presumably, this prevents one
+from writing “arbitrary rules” and is why the logic is then decidable. (On the
+other hand, programming languages designed around combinators are typically
+Turing-complete, so perhaps the analogy is not quite right.)
 
 
 ## Thoughts and confusions
