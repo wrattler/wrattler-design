@@ -16,11 +16,11 @@ for Wrattler. Comments, suggestions, and criticism are welcome.
 
 A major motivation for the creation of Wrattler is to provide a common framework
 into which our various to-be-developed AI assistants shall fit. We anticipate
-that these asistants will generate “suggested analyses” whose intent---roughly
+that these assistants will generate “suggested analyses” whose intent---roughly
 roughly---is to add “additional information” to the data. We don't know the
 order in which the assistants will run, and it's likely that they will run at
 unpredictable times during the data wrangling process, so it will be useful to
-have some commmon data language that is rich enough to express whatever
+have some common data language that is rich enough to express whatever
 annotations the assistants create, in whatever order they create it. By having
 such a language the development of a new assistant will require only a single
 translation (to and from the common language) rather than between every possible
@@ -50,7 +50,7 @@ rethink and improve how notebooks work.
 
 A personal note: I have not been a big fan of notebooks. One reason, I think, is
 that sometimes to write clearly requires that the lexical ordering of the
-analytical writeup be different from the execution ordering. It is rather like
+analytical write-up be different from the execution ordering. It is rather like
 the distinction, in programming, between adding comments, which are subservient
 to the ordering of the code, and *literate programming*, in which the order of
 the code is subservient to the needs of exposition. (I admit that literate
@@ -131,8 +131,8 @@ serialisation more than the nature of the data.
     that certain hierarchical structures are encoded directly in the
     data. Perhaps better thought of as “*ad hoc* data”.
  
-    I think of these more as a seralisation mechanism for particular kinds of
-    underlying structure, rather as csv is a seralisation of tabular data.
+    I think of these more as a serialisation mechanism for particular kinds of
+    underlying structure, rather as csv is a serialisation of tabular data.
 
   - [http://schema.org/](Schema.org) 
   
@@ -225,7 +225,7 @@ Raw data frequently contains values that can be thought of as different types,
 arising by inconsistencies or errors in data collection, such as measurements
 record in different units. 
 
-In our protoype assistant “ptype,” what is returned is a probabilistic guess as
+In our prototype assistant “ptype,” what is returned is a probabilistic guess as
 to the type of each value in a column, with the type of the column itself being
 a mixture.
 
@@ -289,7 +289,7 @@ $\mathcal{D}_i$ is a (possibly infinite) set.
 
 A *relation schema* is a finite tuple of domains. (Recall that a tuple differs
 from a set in being ordered and allowing duplicates.) The *carrier* of a
-relation schema is the cartesian product of the domains in that relation
+relation schema is the Cartesian product of the domains in that relation
 schema.[^carrier] A *relation* is a relation schema together with a finite
 subset of the carrier of that schema. By the *header* of a relation is meant the
 corresponding relation schema.
@@ -415,6 +415,16 @@ Finally, the operations of the algebra allow one to “deduce other facts from t
 ones given.” In RDMSs, the language SQL roughly describes the algebra
 above.
 
+## Support for the desiderata
+
+Tables are clearly supported; as are, in some sense, the meanings of primitive
+types. However, interpretations are not available, nor are complex types or
+user-defined annotations. In addition, the real challenge with relational
+databases seems to be communicating the schema *and their relationships*: the
+mechanisms available for explaining which projections mean what seem to be
+confusing. There is SQL DDL, of course, but it's not particularly universal.
+
+
 ## Problems
 
 The formalism above is somewhat unsatisfactory as a practical model of
@@ -444,7 +454,7 @@ model. Thus, if, in the relational model, one wants to assert the existence of a
 particular person, such as Fred Flintstone, one must create a relation (of
 persons, perhaps) whose domains are collectively sufficient uniquely to identify
 Fred Flintstone amongst all other persons. In practice, such domains are not
-always available (or at least obvious) and it is common to find onself having
+always available (or at least obvious) and it is common to find oneself having
 two persons whom the known facts fail to individuate.
 
 Suppose there are two persons about whom the known facts are identical. Such
@@ -465,7 +475,7 @@ be “There exists a person *and* that person has the following characteristics.
 In support of my argument that this interpretation is common I note that
 database designers will frequently invent an “id” column, typically valued in
 the domain of integers, whose purpose is precisely to identify individuals. “id”
-columns are everywhere, with much attendent argument about what to call them.
+columns are everywhere, with much attendant argument about what to call them.
 
 Perhaps what one ought to do is to specify a new domain---the domain of Persons,
 say---and value the “id” columns in *that*. But now one needs a model of how
@@ -488,7 +498,7 @@ describe.
 Finally, implementations simply fail to respect the above formalism in several
 regards. The following two differences are well-known. A relation is, as the
 definition says, a set; however, many implementations model relations as a bag
-(that is, alowing duplicate elements). Implementations also adduce a “special”
+(that is, allowing duplicate elements). Implementations also adduce a “special”
 value, denoted `NULL`, which is allowed in any position in any predicate. The
 semantics of this value are confusing. Sometimes its intended interpretation is
 to indicate a violation of the closed-world assumption: that there does exist
@@ -502,12 +512,6 @@ A further discrepancy, less widely known, is that while there are two relations
 having an empty relation schema (the empty relation and the relation containing
 the empty tuple), there is typically no representation of these in
 implementations.
-
-## Support for the desiderata
-
-Tables are clearly supported; as are, in some sense, the meanings of primitive
-types. However, interpretations are not available, nor are complex types or
-user-defined annotations. 
 
 
 # Appendix B: Overview of Ontology
@@ -586,7 +590,7 @@ world. However, as noted, reasoning in first-order logics is computationally
 difficult. So one considers a more restricted version. 
 
 There are multiple varieties of these restricted versions but they share certain
-common features. In paricular, the non-logical symbols are restricted to
+common features. In particular, the non-logical symbols are restricted to
 constant symbols (which are now known as *individuals*), one-place predicates
 (known as *concepts*), and two-place relations (known as *roles*). Furthermore,
 the kinds of sentences one is allowed to construct are limited. For example,
@@ -622,10 +626,67 @@ There is one big caveat to the translation between the relational model and the
 logic formalism. In the relational model, the assertion that every person has an
 age is a *constraint:* For every person in the database, there is an
 accompanying age *in the database*. In the logic model, the assertion is an
-*axiom:* if one finds oneself in posession of a person, then one can deduce that
+*axiom:* if one finds oneself in possession of a person, then one can deduce that
 that person must have an age but the actual value of that age may not be known
 or deducible from the facts that are known. Logics take the “open-world
 assumption:” there may be facts that are not deducible from the known facts.
+
+## Support for the desiderata
+
+Do ontologies support tabular data? Consider the following table, concerning
+demographic data from a particular ston-eage community:
+
+| `id` | `name`           | `age` | `gender` |
+|------+------------------+-------+----------|
+|    1 | Wilma Flintstone |    33 | f        |
+|    2 | Fred Flintstone  |    34 | m        |
+|    3 | Betty Rubble     |    31 | f        |
+|    4 | Barney Rubble    |    32 | m        |
+
+Here one could imagine that the domains are the naturals (for the `id` and `age`
+columns) and text strings (for the `name` and `gender` columns). (Already that's
+bit odd. One would really like entries in the `gender` column to come from a
+fixed set of alternatives, not an arbitrary string. But let's continue.)
+
+This table is a relation of arity four. In an ontology, we only have one- and
+two-place relations to play with. We might proceed as follows: let the domain of
+discourse be the union of people, names, natural numbers, and genders. That is,
+the *person* Fred Flintstone is an individual, the *number* 32 is an individual,
+and so on. We introduce disjoint concepts *Person*, *String*, *Natural*, and *Gender*
+to decide which is which. Finally, we introduce roles *nameOf*, *ageOf*, and
+*genderOf*, whose first argument is supposed to be a *Person* and whose second
+argument must be of the appropriate concept (and we introduce axioms to note
+those facts). So, for example, we might write 
+$$
+\text{\textit{Person}} \sqsubseteq \exists \text{\textit{nameOf}}.\text{\textit{String}}
+$$
+as well as
+$$
+\text{\textit{Person}}(\text{\textit{fred}}), \qquad
+\text{\textit{Name}}(\text{``Fred Flintstone''}).
+$$
+and
+$$
+\text{\textit{nameOf}}(\text{\textit{fred}}, \text{``Fred Flintstone''}).
+$$
+
+I suppose that's a pretty direct translation! Still, some things are confusing,
+at least to me. For one thing, I had to make a decision about the `id` columns:
+I could have included it as a domain along with a new role, *idOf*. But it was
+pretty clear that the only reason for the existence of `id` is to denote that
+there are, in the world, certain individuals, who have the properties expressed
+by the rest of the table.
+
+In some sense, the ontology appears to win here: it explicity recognises the
+existence of individuals, whereas the relational model seems to struggle with
+those. On the other hand, if we genuinely have an $n$-place relation the
+ontology seems to need a lot of machinery to express that relation.
+
+Also: does anyone else feel uncomfortable that we're throwing people and
+numbers into the same set, with only predicates to differentiate them? 
+
+
+
 
 
 ## Thoughts and confusions
