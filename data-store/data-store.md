@@ -274,10 +274,14 @@ FIXME: I think there's something about this in the OWL spec.
 
 # Appendix A: Overview of the Relational Model
 
-FIXME: Someone who knows this subject should check this! The following formalism
-is what sense I have been able to make of this subject. It's somewhat different
-to the usual presentation, which uses names to do a lot of the work I have done
-with maps.
+FIXME: Someone who knows this subject should check this! 
+
+The following formalism is what sense I have been able to make of this
+subject. It's somewhat different to the usual presentation, which uses names to
+do a lot of the work I have done with maps. I try to stay within the realm of
+mathematics (specifically set theory) without moving to particular
+representations in order to make definitions.
+
 
 ## Formalism
 
@@ -288,16 +292,17 @@ Fix, once and for all, a finite set of *domains*, $\mathcal{D} =
 $\mathcal{D}_i$ is a (possibly infinite) set.
 
 A *relation schema* is a finite tuple of domains. (Recall that a tuple differs
-from a set in being ordered and allowing duplicates.) The *carrier* of a
-relation schema is the Cartesian product of the domains in that relation
-schema.[^carrier] A *relation* is a relation schema together with a finite
-subset of the carrier of that schema. By the *header* of a relation is meant the
-corresponding relation schema.
+from a set in being ordered and allowing duplicates.) The *extent* of a relation
+schema is the Cartesian product of the domains in that relation schema.[^extent]
 
-[^carrier]: As far as I am aware, the nomenclature of “carrier” is not common
-    but it proves convenient in stating certain definitions later on. FIXME:
-    Probably the notion of carrier should apply to a relation, rather than a
-    relation schema.
+A *relation* is a relation schema together with a finite subset of the extent of
+that schema. The relation schema of a relation is sometimes called its *header*;
+the subset of the extent is sometimes called the *extension* or *body*.
+
+[^extent]: As far as I am aware, the nomenclature of “extent” is not standard
+    and could be confused with the notion of the *extension* of a
+    relation. However, it proves convenient in stating certain definitions later
+    on. 
 
 A *database instance* consists of the following data:
  
@@ -307,17 +312,36 @@ A *database instance* consists of the following data:
 
 (That, at any rate, is what I understand the formalism to be.)
 
-### Integrity constraints and normal forms
+The names are there to individuate relations. It may happen that two relations
+have the same relation schema and, accidentally, the same extension but
+nontheless refer to different sets of facts about the world.
 
-FIXME: What is going on here?
 
-*Integrity constraints* are restrictions on the actual relations that might be
-present in a database instance. *Normal forms* are restrictions on the sorts of
-“functional dependencies” that may exist. I am not convinced I understand how
-either of these fit into this formalism.
+### Interpretation
 
-Perhaps integrity constraints are modelled by giving a set of projections (see
-below) that must hold in all database instances. 
+The intended interpretation, I think, is as follows. Each domain represents the
+“allowed primitive values of a certain type.” One could imagine that the domains
+are things like “the real numbers,”, “the natural numbers”, “the set {true,
+false},” and so on.[^domains-in-practice]
+
+[^domains-in-practice]: In practice, the domains are in fact such things as:
+“strings of ASCII characters of at length at most 1024,” “floating point
+numbers,” “fixed precision decimals with at most 10 digits before the decimal
+point and two digits after,” and so on.
+
+Each relation represents “a set of facts”, each fact being the truth of some
+“proposition” $P(C_1, \dotsc, C_n)$ where $P$ is an $n$-ary predicate and the
+$C_i$ are elements of the domains in the header of the relation. Thus, two
+relations be considered different even if they have the same header and
+extension because they represent different propositions.
+
+We are supposed to operate under the “closed-world assumption,” the assumption
+that a proposition is false if it *could* be represented by an element of a
+relation but does *not* in fact occur in that relation. In practice the
+interpreation of a given database may be up to the implementor.
+
+Finally, the operations of the algebra described below allow one to “deduce
+other facts from the ones given.” 
 
 
 ### The relational algebra
@@ -390,30 +414,20 @@ resemblance to a universal construction (as in category theory). Perhaps there's
 a better version of all this which starts with the projections, thought of as
 morphisms, and gets the other gadgetry for free.
 
+### Integrity constraints and normal forms
 
-## Interpretation
+FIXME: What is going on here?
 
-The intended interpretation, I think, is as follows. Each domain represents the
-“allowed primitive values of a certain type.” One could imagine that the domains
-are things like “the real numbers,”, “the natural numbers”, “the set {true,
-false},” and so on.[^domains-in-practice]
+*Integrity constraints* are restrictions on the actual relations that might be
+present in a database instance. *Normal forms* are restrictions on the sorts of
+“functional dependencies” that may exist. I am not convinced I understand how
+either of these fit into this formalism.
 
-[^domains-in-practice]: In practice, the domains are in fact such things as:
-“strings of ASCII characters of at length at most 1024,” “floating point
-numbers,” “fixed precision decimals with at most 10 digits before the decimal
-point and two digits after,” and so on.
+Perhaps integrity constraints are modelled by giving a set of projections (see
+below) that must hold in all database instances. 
+ ## Interpretation
 
-Each relation represents “a set of facts”, each fact being the truth of some
-“proposition” $P(C_1, \dotsc, C_n)$ where $P$ is an $n$-ary predicate and the
-$C_i$ are elements of the domains in the header of the relation.
 
-The “closed-world assumption” is the assumption that a proposition is false if
-it *could* be represented by an element of a relation but does *not* in fact
-occur in that relation.
-
-Finally, the operations of the algebra allow one to “deduce other facts from the
-ones given.” In RDMSs, the language SQL roughly describes the algebra
-above.
 
 ## Support for the desiderata
 
@@ -425,14 +439,13 @@ mechanisms available for explaining which projections mean what seem to be
 confusing. There is SQL DDL, of course, but it's not particularly universal.
 
 
-## Problems
+## Confusions and befuddlements
 
-The formalism above is somewhat unsatisfactory as a practical model of
-data. (Although it's significantly better than a lot of other proposals!) In
+The formalism above appears in practice to be somewhat unsatisfactory as a model
+of data. (Although it's significantly better than a lot of other proposals!) In
 part, it may be that I have some of the formalism wrong. However, it's also true
-that in practice one frequently sees large variations on this model---such as
-“object-oriented databases”---which strongly suggests that there is some
-unfulfilled need.[^date]
+that there are well-known attempts extend this model---such as “object-oriented
+databases”---which strongly suggests that there is some unfulfilled need.[^date]
 
 [^date]: It's true that some practitioners, most notably Date and
     Darwen [@the-third-manifesto], assert that there would be no need for such
@@ -442,9 +455,10 @@ unfulfilled need.[^date]
 
 For example, one might imagine that the language of facts would be (first-order)
 logic. But (a model of a particular) first-order logic doesn't talk about
-multiple domains, just a single “domain of discourse.” The arguments of a
-predicate may be filled with *any* term, not just an element of a specific
-domain. So perhaps the relational model is some kind of typed logic?
+*multiple* domains, just a single “domain of discourse.” The arguments of a
+predicate may be filled with *any* individual (or function thereof), not just an
+element of a specific domain. So perhaps the relational model is some kind of
+typed logic?
 
 The nature of identity is perennially perplexing (at least to me). In
 first-order logic, there are constant symbols, standing for individuals. It is
@@ -459,18 +473,20 @@ two persons whom the known facts fail to individuate.
 
 Suppose there are two persons about whom the known facts are identical. Such
 persons cannot be distinct tuples in a relation expressing the known facts,
-since relations are a set, not a bag. If I have understood Date correctly, I
-think he would argue that if the facts about two individuals are identical, then
-there is no observation (or query) that would distinguish them, and so nothing
-is gained *by* distinguishing them. 
+since relations are a set, not a bag. 
 
 The interpretation that is commonly given in textbooks of a tuple in a “Persons”
 table is something like: “*There exists* a person having the following
 characteristics...” and that assertion is no less true if there are two persons
-satisfying the given condition. But I do not believe that this is the
-interpretation that database practitioners have in mind when they create a
-Persons table: it seems to me that, were it explicit, the interpretation would
-be “There exists a person *and* that person has the following characteristics.”
+satisfying the given condition. If I have understood Date correctly, I think he
+would argue that if the facts about two individuals are identical, then there is
+no observation (or query) that would distinguish them, and so nothing is gained
+*by* distinguishing them. 
+
+But I do not believe that this is the interpretation that database practitioners
+have in mind when they create a Persons table: it seems to me that, were it made
+explicit, the interpretation would be “There exists a person *and* that person
+has the following characteristics.”
 
 In support of my argument that this interpretation is common I note that
 database designers will frequently invent an “id” column, typically valued in
@@ -621,9 +637,10 @@ $$
 \text{\texttt{Person?}} \sqsubseteq 
     \exists \text{\texttt{AgeOf}}.\text{\texttt{Natural?}}.
 $$
-    
+
 
 ## From relational to ontological and back
+
 
 There is one big caveat to the translation between the relational model and the
 logic formalism. In the relational model, the assertion that every person has an
