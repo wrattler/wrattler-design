@@ -621,6 +621,9 @@ $$
 \text{\texttt{Person?}} \sqsubseteq 
     \exists \text{\texttt{AgeOf}}.\text{\texttt{Natural?}}.
 $$
+    
+
+## From relational to ontological and back
 
 There is one big caveat to the translation between the relational model and the
 logic formalism. In the relational model, the assertion that every person has an
