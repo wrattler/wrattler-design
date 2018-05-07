@@ -76,13 +76,22 @@ The following breaks the work items into a number of steps. We need to produce a
 public demo by June, so STEP 1 lists what is needed to get that. STEP 2 and STEP 3
 are next steps, getting towards beta with full JupyterLab integration.
 
-### STEP 1 - Getting started
+### STEP 1 - Demo for the end of June
 
- - Everything can be hosted in Azure, so that we have a public demo
- - Using (new) Python and (existing) TheGamma and JavaScript kernels
- - Using (perhaps existing simple Azure blob storage based) data store
- - Given (documented) pre-requisites, anyone can run Wrattler on their machine
+What we are aiming for
 
+ - Public demo (e.g. everything can be hosted in Azure)
+ - Polyglot: Using (new) Python and (existing) TheGamma and JavaScript kernels
+ - Basic data store. Perhaps using existing simple Azure blob storage based
+ - Installable: Pre-requisites are documented, anyone can run Wrattler on their machine
+
+How this might map to work items
+
+  - Data analysis: This could be with the broadband data that we've used already
+  - Kernels: Refactoring into two kernel entry points done, initial version of Python kernel
+  - Front-end: Communicates with kernels and data store
+  - Data store: Intial version of API to kernels and front end
+  
 ### STEP 2 - JuptyerLab integration
 
  - The same as in Step 1 can be done inside JuptyerLab
