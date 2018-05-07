@@ -10,7 +10,7 @@ the architecture.
    important in order to make Wrattler a viable open-source project and an easy-to-use
    tool. This also gives us a couple of great things for free (see below). 
    For these reasons, Wrattler should be "another kind of notebook" that can be 
-   created in JupyterLab. Wrattler components should not be tighlty bound to 
+   created in JupyterLab. Wrattler components should not be tightly bound to 
    JupyterLab, but we think JupyterLab is primary vehicle for using Wrattler.
    
  * **Sample polyglot data analysis.** We need to create a sample data analysis that
