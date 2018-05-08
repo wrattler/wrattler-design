@@ -645,8 +645,23 @@ $$
     \exists \text{\texttt{AgeOf}}.\text{\texttt{Natural?}}.
 $$
 
+| Description logic       |                  | First-order logic              |
+|-------------------------|------------------|--------------------------------|
+| Concept                 | $C$              | $C(x)$                         |
+| Subsumption             | $C\sqsubseteq D$ | $C(x)\to D(x)$                 |
+| Conjuction              | $C\sqcap D$      | $C(x)\wedge D(x)$              |
+| Disjunction             | $C\sqcup D$      | $C(x)\vee D(X)$                |
+| Negation                | $\neg C$         | $\neg C(x)$                    |
+| Existential restriction | $\exists R.C$    | $\exists y.R(x, y)\wedge C(y)$ |
+| Value restriction       | $\forall R.C$    | $\forall y.R(x, y)\to C(y)$    |
+
+: Translation between description logic and first-order logic. After Baader *et
+  al.* [@baader2017dl].
+  
+
 
 ## From relational to ontological and back
+
 
 
 There is one big caveat to the translation between the relational model and the
