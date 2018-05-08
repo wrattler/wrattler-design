@@ -537,8 +537,15 @@ of ontologies consists mostly of kvetching to actual experts that I don't
 understand what an ontology is. So you should probably treat my attempts to
 define one with scepticism.
 
-Essentially all my understanding (such as it is) comes from
-[@DBLP:journals/corr/abs-1201-4089], [@nardi2003introduction], and
+The general reference in this field appears to be the collection of articles in
+*The Description Logic Handbook* [@dl-handbook], the first two chapters of which
+are available online and provide a good overview [@nardi2003introduction],
+[@baader2003basic]. The introductory *A Description Logic Primer*
+[@DBLP:journals/corr/abs-1201-4089] is also available online without
+restrictions. More recently, a new textbook, *An Introduction to Description
+Logic* [@baader2017dl] provides a comprehensive introduction.
+
+A decent first course in logic is *Sets, Logic and Categories*
 [@cameron1999sets].
 
 Almost certainly I am misusing the terms “model” and “interpretation.”
