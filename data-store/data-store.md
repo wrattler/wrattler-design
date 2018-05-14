@@ -314,7 +314,7 @@ A *database instance* consists of the following data:
 
 The names are there to individuate relations. It may happen that two relations
 have the same relation schema and, accidentally, the same extension but
-nontheless refer to different sets of facts about the world.
+nonetheless refer to different sets of facts about the world.
 
 
 ### Interpretation
@@ -332,13 +332,13 @@ point and two digits after,” and so on.
 Each relation represents “a set of facts”, each fact being the truth of some
 “proposition” $P(C_1, \dotsc, C_n)$ where $P$ is an $n$-ary predicate and the
 $C_i$ are elements of the domains in the header of the relation. Thus, two
-relations be considered different even if they have the same header and
+relations may be considered different even if they have the same header and
 extension because they represent different propositions.
 
 We are supposed to operate under the “closed-world assumption,” the assumption
 that a proposition is false if it *could* be represented by an element of a
 relation but does *not* in fact occur in that relation. In practice the
-interpreation of a given database may be up to the implementor.
+interpretation of a given database may be up to the implementer.
 
 Finally, the operations of the algebra described below allow one to “deduce
 other facts from the ones given.” 
@@ -352,10 +352,10 @@ set-theoretic--type operations on relations; “joins” of pairs of relations; 
 “projections” from one relation to another.
 
 [^all-relations]: Presumably meaning the set of all relations over a fixed set
-of domains.
+of domains, although this is never made entirely clear.
 
 If two relations have identical headers, then they are subsets of the same set
-(specifically, they are subsets of the same carrier). For such relations the
+(specifically, they are subsets of the same extent). For such relations the
 union, intersection, and difference are defined as those operations on those
 subsets.
 
@@ -369,13 +369,13 @@ there are two possible maps $T\to S$: one taking the single domain in $T$ to the
 second domain in $S$, and one taking it to the third domain. Let $r_T$ be a
 relation with header $T$. We can extend $\mu$ to a map on elements of $r_T$:
 given an element of $r_T$ (*i.e.*, a tuple) we construct an element of the
-carrier of $S$ by the obvious action of $\mu$ on that tuple.
+extent of $S$ by the obvious action of $\mu$ on that tuple.
 
 A *projection*, $\pi_\mu(r_S)$ on some relation $r_S$ of relation schema $S$
 (this time the arrow goes the right way!) is that relation $r_T$ (*i.e.*, that
-subset of the carrier of $T$) whose elements are such that the action of $\mu$
+subset of the extent of $T$) whose elements are such that the action of $\mu$
 produces an element of $r_S$. Informally, it is the “restriction of $r_S$ to the
-domains in $T$.” Alternatively, it is “the set of tuples in the carrier of $T$
+domains in $T$.” Alternatively, it is “the set of tuples in the extent of $T$
 for which there exists some values of the domains of $S$ that are not in $T$
 that makes the values in the other domains equal.”
 
@@ -386,7 +386,7 @@ permutation.)
 Finally, let $r_S$ and $r_T$ be two relations having headers $S$ and $T$
 respectively. Suppose there is given a relation schema $U$ and two projections
 $\mu:S\to U$ and $\nu:T\to U$ respectively. A *join* of $r_S$ and $r_T$ is the
-maximal relation $r_U$ whose carrier is $U$ and for which $\pi_\mu(r_U) = r_S$
+maximal relation $r_U$ whose extent is $U$ and for which $\pi_\mu(r_U) = r_S$
 and $\pi_\nu(r_U) = r_T$. (Here “maximal” means that there is no relation,
 having the same property, for which this one is a proper subset.)
 
@@ -425,8 +425,6 @@ either of these fit into this formalism.
 
 Perhaps integrity constraints are modelled by giving a set of projections (see
 below) that must hold in all database instances. 
- ## Interpretation
-
 
 
 ## Support for the desiderata
@@ -577,7 +575,7 @@ to the particular domain of interest. There is supposed to be given a set of
 symbols*. The latter two come with a number called their *arity* which describes
 how many arguments they have.
 
-To specify a model one must specify a set (called the “domain of discourse“),
+To specify a model one must specify a set (called the “domain of discourse”),
 and give, for each constant symbol, an element of the set; for each function
 symbol, a function on the set; and for each relation symbol, a relation on the
 set; the latter two must have the appropriate arities. The idea is that this set
@@ -650,7 +648,7 @@ $$
 | Concept                 | $C$              | $C(x)$                         |
 | Subsumption             | $C\sqsubseteq D$ | $C(x)\to D(x)$                 |
 | Conjuction              | $C\sqcap D$      | $C(x)\wedge D(x)$              |
-| Disjunction             | $C\sqcup D$      | $C(x)\vee D(X)$                |
+| Disjunction             | $C\sqcup D$      | $C(x)\vee D(x)$                |
 | Negation                | $\neg C$         | $\neg C(x)$                    |
 | Existential restriction | $\exists R.C$    | $\exists y.R(x, y)\wedge C(y)$ |
 | Value restriction       | $\forall R.C$    | $\forall y.R(x, y)\to C(y)$    |
@@ -661,6 +659,7 @@ $$
 
 
 ## From relational to ontological and back
+
 
 
 
@@ -676,7 +675,7 @@ assumption:” there may be facts that are not deducible from the known facts.
 ## Support for the desiderata
 
 Do ontologies support tabular data? Consider the following table, concerning
-demographic data from a particular ston-eage community:
+demographic data from a particular stone-age community:
 
 | `id` | `name`           | `age` | `gender` |
 |------+------------------+-------+----------|
