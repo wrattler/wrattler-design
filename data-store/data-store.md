@@ -660,20 +660,6 @@ $$
 
 ## From relational to ontological and back
 
-
-
-
-There is one big caveat to the translation between the relational model and the
-logic formalism. In the relational model, the assertion that every person has an
-age is a *constraint:* For every person in the database, there is an
-accompanying age *in the database*. In the logic model, the assertion is an
-*axiom:* if one finds oneself in possession of a person, then one can deduce that
-that person must have an age but the actual value of that age may not be known
-or deducible from the facts that are known. Logics take the “open-world
-assumption:” there may be facts that are not deducible from the known facts.
-
-## Support for the desiderata
-
 Do ontologies support tabular data? Consider the following table, concerning
 demographic data from a particular stone-age community:
 
@@ -718,6 +704,15 @@ pretty clear that the only reason for the existence of `id` is to denote that
 there are, in the world, certain individuals, who have the properties expressed
 by the rest of the table.
 
+There is one big caveat to the translation between the relational model and the
+logic formalism. In the relational model, the assertion that every person has an
+age is a *constraint:* For every person in the database, there is an
+accompanying age *in the database*. In the logic model, the assertion is an
+*axiom:* if one finds oneself in possession of a person, then one can deduce that
+that person must have an age but the actual value of that age may not be known
+or deducible from the facts that are known. Logics take the “open-world
+assumption:” there may be facts that are not deducible from the known facts.
+
 In some sense, the ontology appears to win here: it explicity recognises the
 existence of individuals, whereas the relational model seems to struggle with
 those. On the other hand, if we genuinely have an $n$-place relation the
@@ -727,20 +722,11 @@ Also: does anyone else feel uncomfortable that we're throwing people and
 numbers into the same set, with only predicates to differentiate them? 
 
 
+# Appendix C: Overview of F# type providers
 
-
-
-## Thoughts and confusions
-
-I think the following confusions are well-rehearsed but I am not sufficiently
-knowledgeable about the subject to say to what extent they have been resolved.
-
-
-
-
-
-
-
+“Type providers” [@fsharp-data-pldi2016] are a way of making structured data
+available to code in a statically typed programming language, using the
+mechanism of programming language types.
 
 
 # Further reading
