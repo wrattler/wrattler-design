@@ -724,6 +724,32 @@ numbers into the same set, with only predicates to differentiate them?
 
 # Appendix C: Overview of F# type providers
 
+Computer programming languages typically provide “primitive” data types
+(integers, floats, chars) along with facilities for creating new, structured
+data types. These structured types provide another model of data.
+
+Most languages provide at least the following two kinds of structured data:
+
+  1. *Vectors* (or *arrays*): variable-length sequences of data,[^vects] each of which
+     is the same type;[^lisp]
+  2. *Records* (or *structs*, or *product types*): fixed-length sequences of
+     (usually named) elements of possibly different types.
+
+[^vects]: By “variable-length” I mean that the length is not necessarily known
+at compile-time. In C, for example, the programmer must do quite a bit of work
+in order to add a new element to the end of a vector, mostly allocating and
+deallocating memory, but a function may be written to expect a vector of any
+length.
+
+[^lisp]: Lisp also provides *lists*: variable length sequences of heterogenous
+data. However, that's becuase Lisp types are not known at compile time (at
+least, in most Lisps). Alternatively, one can imagine that all Lisp vaules
+belonging to a universal sum type, so that the list is in fact homogenous.
+
+
+
+
+
 “Type providers” [@fsharp-data-pldi2016] are a way of making structured data
 available to code in a statically typed programming language, using the
 mechanism of programming language types.
