@@ -798,11 +798,13 @@ the input examples contained a real number in a particular part of the
 structure. Then the type provider will provide a value of type real to the
 programmer on any valid input. Now suppose that some novel data contains an
 integer where the float is expected. That is, in some sense, not a problem: an
-integer can be treated as a real, or rather, an integer *is* a real. Thus there
-is a notion of “specialisation” of types that allows the novel input to differ
-from the examples in a sensible way.
+integer can be treated as a real; or, rather, an integer *is* a real. Thus there
+is a notion of “specialisation” of types that allows the novel input to be a
+“more particular version” of the expected input.
 
-Another example here is the product type.
+As another example, consider an inferred product type, `X * Y`. The programmer
+is expecting a pair, `(x, y)`, where `x` is of type `X` and `y` of type `Y`. Now
+suppose that
 
 
 
