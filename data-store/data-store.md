@@ -1,3 +1,4 @@
+
 ---
 title: The Wrattler Data Store
 author: James Geddes
@@ -724,35 +725,86 @@ numbers into the same set, with only predicates to differentiate them?
 
 # Appendix C: Overview of F# type providers
 
+“Type providers” [@fsharp-data-pldi2016] are a mechanism by which a programmer
+is given convenient access to structured data that is read into the program.
+
 Computer programming languages typically provide “primitive” data types
 (integers, floats, chars) along with facilities for creating new, structured
 data types. These structured types provide another model of data.
 
 Most languages provide at least the following two kinds of structured data:
 
-  1. *Vectors* (or *arrays*): variable-length sequences of data,[^vects] each of which
-     is the same type;[^lisp]
+  1. *Vectors* (or *arrays*, or *lists*): variable-length sequences of
+     data,[^vects] each of which is the same type;[^lisp]
   2. *Records* (or *structs*, or *product types*): fixed-length sequences of
      (usually named) elements of possibly different types.
 
 [^vects]: By “variable-length” I mean that the length is not necessarily known
-at compile-time. In C, for example, the programmer must do quite a bit of work
-in order to add a new element to the end of a vector, mostly allocating and
-deallocating memory, but a function may be written to expect a vector of any
-length.
+at compile-time. Note that, traditionally, a distinction is made between the
+implementation of vectors (usually contiguously laid out in memory) and lists
+(usually a linked sequence of elements) that affects their performance for
+updates and reads. That distinction is not pertinent here.
 
-[^lisp]: Lisp also provides *lists*: variable length sequences of heterogenous
+[^lisp]: Lisp lists are variable length sequences of *heterogeneous*
 data. However, that's becuase Lisp types are not known at compile time (at
-least, in most Lisps). Alternatively, one can imagine that all Lisp vaules
-belonging to a universal sum type, so that the list is in fact homogenous.
+least, in most Lisps). Alternatively, one can imagine that all Lisp values
+belong to a universal type, so that the list is in fact homogeneous.
+
+“Typed” languages (such as F# and those in the ML family such as Haskell)
+formalise the above types and also add:
+
+  3. *Sum types* (or *discriminated unions*, or *tagged unions*): types whose
+     values may be one of a fixed number of types (and it is known which).
+
+Sum types and product types together form two sides of a coherent model for
+constructing new types, known as *algebraic data types*. In this model, the
+construction of a new type is allowed to be recursive so that, and this
+generalisation means that lists can be subsumed in the same model.
+
+Here's how lists work. First, notation. Write `1` for the empty product type
+(there is only one value of this type). Given types `S` and `T`, write `S * T`
+for the product: a value of type `S * T` is a pair of values, one of type `S`
+and one of type `T`. Write `S + T` for the sum: a value of type `S + T` is
+either a value of type `S` or a value of type `T`, and it is known which.
+
+Next, we translate the following recursive definition: “a list of integers is
+either an empty list, or an integer followed by a list of integers.” Thus, a
+list of `Int` is a type `L` such that
+
+    L = 1 + Int * L
+
+Sometimes the notation `[Int]` is used to mean “list of `Int`.”
+
+Languages that provide types of this form also typically provide a convenient
+syntax for accessing the various parts of a structured value: either
+“destructuring” a product type into its components, or “matching” a sum type on
+its possible types. 
+
+It would be very nice to have a similar syntactic convenience available at
+runtime for data that is read into a program from a structured source, such as
+csv, XML, JSON, etc, and this is what the F# type provider library
+does. Effectively, the type provider is “trained,” at compile-time, on a set of
+example input structures. The type provider constructs a minimal type sufficient
+to describe the possible example datasets, and that type is known to the program
+at runtime. When a new dataset is read, it is parsed, at runtime, to produce a
+value of the known type, which can then be destructured by whatever facilities
+the language provides.
+
+There is an interesting wrinkle to this story. It can often happen that the data
+read at runtime does not precisely match one of the input forms but nonetheless
+can be treated as if it did. For example, suppose that the language has separate
+primitive types for integers and (some representation of) reals, and suppose all
+the input examples contained a real number in a particular part of the
+structure. Then the type provider will provide a value of type real to the
+programmer on any valid input. Now suppose that some novel data contains an
+integer where the float is expected. That is, in some sense, not a problem: an
+integer can be treated as a real, or rather, an integer *is* a real. Thus there
+is a notion of “specialisation” of types that allows the novel input to differ
+from the examples in a sensible way.
+
+Another example here is the product type.
 
 
-
-
-
-“Type providers” [@fsharp-data-pldi2016] are a way of making structured data
-available to code in a statically typed programming language, using the
-mechanism of programming language types.
 
 
 # Further reading
