@@ -725,12 +725,14 @@ numbers into the same set, with only predicates to differentiate them?
 
 # Appendix C: Overview of F# type providers
 
-“Type providers” [@fsharp-data-pldi2016] are a mechanism by which a programmer
-is given convenient access to structured data that is read into the program.
-
 Computer programming languages typically provide “primitive” data types
-(integers, floats, chars) along with facilities for creating new, structured
-data types. These structured types provide another model of data.
+(integers, floats, characterss) along with facilities for creating new,
+structured data types. These structured types provide another model of data.
+
+“Type providers” [@fsharp-data-pldi2016] are a mechanism by which a programmer
+is given convenient access to structured data that is read into the program, by
+exposing the structure of the data as a type. What follows is an overview only:
+I have omitted many details, of both implementation and use.
 
 Most languages provide at least the following two kinds of structured data:
 
@@ -751,15 +753,15 @@ least, in most Lisps). Alternatively, one can imagine that all Lisp values
 belong to a universal type, so that the list is in fact homogeneous.
 
 “Typed” languages (such as F# and those in the ML family such as Haskell)
-formalise the above types and also add:
+formalise the above types and add:
 
   3. *Sum types* (or *discriminated unions*, or *tagged unions*): types whose
      values may be one of a fixed number of types (and it is known which).
 
-Sum types and product types together form two sides of a coherent model for
-constructing new types, known as *algebraic data types*. In this model, the
-construction of a new type is allowed to be recursive so that, and this
-generalisation means that lists can be subsumed in the same model.
+Sum types and product types together form two sides of a coherent theory of
+*algebraic data types*. In this theory, the construction of a new type is
+allowed to be recursive, and this generalisation means that lists can be
+subsumed in the same model.
 
 Here's how lists work. First, notation. Write `1` for the empty product type
 (there is only one value of this type). Given types `S` and `T`, write `S * T`
@@ -782,29 +784,42 @@ its possible types.
 
 It would be very nice to have a similar syntactic convenience available at
 runtime for data that is read into a program from a structured source, such as
-csv, XML, JSON, etc, and this is what the F# type provider library
-does. Effectively, the type provider is “trained,” at compile-time, on a set of
-example input structures. The type provider constructs a minimal type sufficient
-to describe the possible example datasets, and that type is known to the program
-at runtime. When a new dataset is read, it is parsed, at runtime, to produce a
-value of the known type, which can then be destructured by whatever facilities
-the language provides.
+csv, XML, JSON, etc, and this is what the F# type provider library provides. The
+type provider is “trained” on a set of example input structures. The type
+provider then constructs a minimal type sufficient to describe the possible
+example datasets, and provides both a type definition, known to the programmer,
+and a parser for that kind of data. When a new dataset is read at runtime, it is
+parsed to produce a value of the known type, which can then be destructured by
+whatever facilities the language provides. The programmer is thus guaranteed not
+to be given arbitrary data and in particular can rely on functions she writes to
+extract particualr values from the input data.
 
 There is an interesting wrinkle to this story. It can often happen that the data
-read at runtime does not precisely match one of the input forms but nonetheless
-can be treated as if it did. For example, suppose that the language has separate
-primitive types for integers and (some representation of) reals, and suppose all
-the input examples contained a real number in a particular part of the
-structure. Then the type provider will provide a value of type real to the
-programmer on any valid input. Now suppose that some novel data contains an
-integer where the float is expected. That is, in some sense, not a problem: an
-integer can be treated as a real, or rather, an integer *is* a real. Thus there
-is a notion of “specialisation” of types that allows the novel input to differ
-from the examples in a sensible way.
+read at runtime does not precisely match one of the input forms. In certain
+circumstances, the data can nonetheless be treated as if it did match a known
+input form. For example, suppose that the language has separate primitive types
+for (some representation of) integers and reals, and suppose all the input
+examples contained a real number in a particular part of the structure. Then the
+type provider will provide a value of type `Float` (say) to the programmer, on
+any valid input. Now suppose that some novel data contains an integer where the
+real is expected. The type provider must not pass an `Int` to the programmer as
+this would either violate the type safety guarantee or cause the program to
+crash. 
 
-Another example here is the product type.
+However, in some sense, there isn't really a problem: an integer can be treated
+as a real---or rather, an integer *is* a real---and the type provider can
+silently convert the `Int` to a `Float`, the programmer being none the
+wiser. Thus there is a notion of “specialisation” of types, which allows the
+novel input to differ from the examples in a sensible way.
 
+This notion extends to structured types. Suppose the type provider (and thus the
+program) expects a record `(x, y)`, consisting of a value `x` of type `X` and a
+value `y` of type `Y`, and suppose that the runtime data contains instead a
+record `(x, y, z)`. Then the type provider simply “forgets” the extra component
+`z` and passes the expected record to the program.
 
+Petricek *et al.* call this construct a *shape*: A shape is like a type, only
+with a notion that is a bit like subtyping.
 
 
 # Further reading
