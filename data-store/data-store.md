@@ -818,13 +818,16 @@ value `y` of type `Y`, and suppose that the runtime data contains instead a
 record `(x, y, z)`. Then the type provider simply “forgets” the extra component
 `z` and passes the expected record to the program.
 
-Petricek *et al.* call this construct a *shape*: A shape is like a type, only
-with a notion that is a bit like subtyping.
+To effect this in practice, what is exposed to the user are classes with
+members: these classes allow the type provider to convert the underlying types
+when a getter method is called, for example.
+
+Petricek *et al.* call this construct a *shape*: A shape is like a “type of
+JSON, XML, and csv files,” and comes with a notion that is a bit like subtyping
+that is useful when parsing those kind of files.
 
 
 # Further reading
-
-
 
 -  https://doi.org/10.1017/S0956796818000035
 
