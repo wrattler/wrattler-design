@@ -286,6 +286,13 @@ representations in order to make definitions.
 
 ## Formalism
 
+    * * *
+
+**NOTE: I am rethinking this section and the formulation is likely to change.**
+
+    * * *
+    
+
 ### Relations and databases
 
 Fix, once and for all, a finite set of *domains*, $\mathcal{D} =
